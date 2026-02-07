@@ -1,10 +1,11 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { Building2, CheckCircle2, Clock, XCircle } from "lucide-react";
 
 export default async function EstablishmentsPage() {
   const session = await auth();
-  
+
   if (session?.user?.role !== "ADMIN") {
     return redirect("/");
   }
@@ -16,7 +17,12 @@ export default async function EstablishmentsPage() {
 
   const establishments = await prisma.hotelProfile.findMany({
     include: {
-      user: true,
+      user: {
+        select: {
+          email: true,
+          createdAt: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -37,13 +43,13 @@ export default async function EstablishmentsPage() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Company Name
+                Hotel Name
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 UEN / Reg No.
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Contact
+                Contact Email
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Verification
@@ -54,30 +60,40 @@ export default async function EstablishmentsPage() {
             {establishments.map((est) => (
               <tr key={est.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    {est.companyName || "Unnamed"}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {est.address || "No address"}
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                      <Building2 size={20} className="text-gray-500" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {est.hotelName}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {est.location}
+                      </div>
+                    </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {est.uen || "N/A"}
+                  {est.uen}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div>{est.contactPerson || "No contact"}</div>
-                  <div>{est.contactNumber}</div>
+                  {est.user.email}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      est.isVerified
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {est.isVerified ? "Verified" : "Unverified"}
-                  </span>
+                  {est.verificationStatus === "VERIFIED" ? (
+                    <span className="px-2 inline-flex items-center gap-1 text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      <CheckCircle2 size={12} /> Verified
+                    </span>
+                  ) : est.verificationStatus === "DECLINED" ? (
+                    <span className="px-2 inline-flex items-center gap-1 text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                      <XCircle size={12} /> Declined
+                    </span>
+                  ) : (
+                    <span className="px-2 inline-flex items-center gap-1 text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                      <Clock size={12} /> Pending
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}
