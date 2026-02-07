@@ -1,65 +1,204 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { Navbar, LiveTicker, FAQ, ContactForm } from '@/components';
+import { UserPlus, GraduationCap, Search } from 'lucide-react';
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <>
+      <Navbar />
+
+      {/* Hero Section */}
+      <section className="hero">
+        <h1 className="hero-title">
+          Unlock shifts at unique stays
+        </h1>
+        <p className="hero-subtitle">
+          Connect with Singapore&apos;s most exciting boutique hotels, capsule hotels, and serviced apartments.
+          Find flexible work that fits your schedule.
+        </p>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <Link href="/auth/register?type=worker" className="btn btn-primary btn-lg">
+            I&apos;m Looking for Work
+          </Link>
+          <Link href="/auth/register?type=hotel" className="btn btn-secondary btn-lg">
+            I&apos;m Hiring Staff
+          </Link>
+        </div>
+      </section>
+
+      {/* Live Ticker */}
+      <LiveTicker />
+
+      {/* How It Works Section */}
+      <section id="how-it-works" className="section">
+        <div className="container">
+          <h2 style={{ textAlign: 'center', marginBottom: '1rem' }}>
+            How <span className="text-gold">Shyft</span> Works
+          </h2>
+          <p className="text-muted" style={{ textAlign: 'center', marginBottom: '3rem', maxWidth: '600px', margin: '0 auto 3rem' }}>
+            Get started in three simple steps
           </p>
+
+          <div className="grid-3">
+            {/* Step 1 */}
+            <div className="card step-card">
+              <div className="step-number">
+                <UserPlus size={24} />
+              </div>
+              <h3 className="step-title">Sign Up & Verify</h3>
+              <p className="step-description">
+                Create your account and complete our quick verification process.
+                We&apos;ll confirm your identity and right to work in Singapore.
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="card step-card">
+              <div className="step-number">
+                <GraduationCap size={24} />
+              </div>
+              <h3 className="step-title">Complete Training</h3>
+              <p className="step-description">
+                Finish the Shyft Academy modules covering boutique hotels,
+                capsule hotels, and serviced apartments.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="card step-card">
+              <div className="step-number">
+                <Search size={24} />
+              </div>
+              <h3 className="step-title">Find Shifts</h3>
+              <p className="step-description">
+                Browse available shifts, apply instantly, and start earning.
+                Track your hours, ratings, and tier progress.
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Stats Section */}
+      <section className="section" style={{ background: 'var(--card)' }}>
+        <div className="container">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem', textAlign: 'center' }}>
+            <div>
+              <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--accent)' }}>500+</div>
+              <div className="text-muted">Active Workers</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--accent)' }}>50+</div>
+              <div className="text-muted">Partner Hotels</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--accent)' }}>10k+</div>
+              <div className="text-muted">Shifts Completed</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--accent)' }}>4.8</div>
+              <div className="text-muted">Average Rating</div>
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* FAQ Section */}
+      <FAQ />
+
+      {/* Contact Section */}
+      <ContactForm />
+
+      {/* Footer */}
+      <footer style={{
+        background: 'var(--card)',
+        borderTop: '1px solid var(--border)',
+        padding: '3rem 0',
+      }}>
+        <div className="container">
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '2rem',
+            marginBottom: '2rem',
+          }}>
+            {/* Brand */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                <div style={{
+                  width: '2rem',
+                  height: '2rem',
+                  background: '#000',
+                  border: '2px solid var(--accent)',
+                  borderRadius: 'var(--radius-sm)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 800,
+                  color: 'var(--accent)',
+                }}>
+                  S
+                </div>
+                <span style={{ fontWeight: 700, color: 'var(--foreground)' }}>
+                  Shyft<span style={{ color: 'var(--accent)' }}>Sg</span>
+                </span>
+              </div>
+              <p className="text-muted" style={{ fontSize: '0.875rem' }}>
+                Connecting hospitality talent with unique stays across Singapore.
+              </p>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 style={{ marginBottom: '1rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Quick Links</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <Link href="#how-it-works" className="nav-link">How It Works</Link>
+                <Link href="#faq" className="nav-link">FAQ</Link>
+                <Link href="#contact" className="nav-link">Contact</Link>
+              </div>
+            </div>
+
+            {/* For Workers */}
+            <div>
+              <h4 style={{ marginBottom: '1rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>For Workers</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <Link href="/auth/register?type=worker" className="nav-link">Sign Up</Link>
+                <Link href="/auth/login" className="nav-link">Login</Link>
+                <Link href="#faq" className="nav-link">Help Center</Link>
+              </div>
+            </div>
+
+            {/* For Hotels */}
+            <div>
+              <h4 style={{ marginBottom: '1rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>For Hotels</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <Link href="/auth/register?type=hotel" className="nav-link">Partner With Us</Link>
+                <Link href="/auth/login" className="nav-link">Hotel Login</Link>
+                <Link href="#contact" className="nav-link">Support</Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div style={{
+            borderTop: '1px solid var(--border)',
+            paddingTop: '1.5rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '1rem',
+          }}>
+            <p className="text-muted" style={{ fontSize: '0.75rem' }}>
+              © 2026 Shyft Sg. All rights reserved.
+            </p>
+            <div style={{ display: 'flex', gap: '1.5rem' }}>
+              <Link href="/privacy" className="nav-link" style={{ fontSize: '0.75rem' }}>Privacy Policy</Link>
+              <Link href="/terms" className="nav-link" style={{ fontSize: '0.75rem' }}>Terms of Service</Link>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </>
   );
 }

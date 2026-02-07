@@ -1,0 +1,512 @@
+// schema.prisma
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum Role {
+  ADMIN
+  WORKER
+  HOTEL
+}
+
+enum WorkPassType {
+  CITIZEN
+  PERMANENT_RESIDENT
+  STUDENT_PASS
+  LTVP
+}
+
+enum Tier {
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  DECLINED
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  COMPLETED
+  CANCELLED
+}
+
+enum MessageType {
+  SYSTEM
+  HOTEL_TO_WORKER
+  WORKER_TO_HOTEL
+  ADMIN_TO_USER
+  CONTACT_FORM
+}
+
+// ============================================
+// USER MODEL (Base for all roles)
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  role          Role
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations (only one will be populated based on role)
+  workerProfile WorkerProfile?
+  hotelProfile  HotelProfile?
+  adminProfile  AdminProfile?
+
+  // Messages
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  
+  // Conversations
+  conversationsAsOne Conversation[] @relation("ConversationsAsOne")
+  conversationsAsTwo Conversation[] @relation("ConversationsAsTwo")
+
+  @@index([email])
+  @@index([role])
+}
+
+// ============================================
+// WORKER PROFILE
+// ============================================
+
+model WorkerProfile {
+  id                    String             @id @default(cuid())
+  userId                String             @unique
+  user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Personal Info
+  firstName             String
+  lastName              String
+  dateOfBirth           DateTime
+  phoneNumber           String?
+  profileImageUrl       String?
+  resumeUrl             String?
+
+  // Work Authorization
+  workPassType          WorkPassType
+  workPassNumber        String?
+  workPassExpiryDate    DateTime?
+  schoolName            String?            // Required for STUDENT_PASS verification
+
+  // Verification & Compliance
+  verificationStatus    VerificationStatus @default(PENDING)
+  verificationNote      String?
+  verifiedAt            DateTime?
+  verifiedByAdminId     String?
+
+  // Skills & Training
+  hasBasicEnglish       Boolean            @default(false)
+  hasComputerSkills     Boolean            @default(false)
+  trainingProgress      Int                @default(0) // 0-100
+  trainingCompletedAt   DateTime?
+
+  // Tier System (based on hours worked)
+  totalHoursWorked      Float              @default(0)
+  tier                  Tier               @default(SILVER)
+
+  // Strike System (cancellation <12 hours before shift)
+  strikes               Int                @default(0)
+
+  // Rating (aggregated from hotel reviews)
+  averageRating         Float?
+  totalReviews          Int                @default(0)
+
+  // Status
+  isActive              Boolean            @default(true)
+  isBanned              Boolean            @default(false)
+  bannedReason          String?
+
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  // Relations
+  applications          Application[]
+  shifts                Shift[]            @relation("WorkerShifts")
+
+  @@index([verificationStatus])
+  @@index([tier])
+  @@index([isActive])
+}
+
+// ============================================
+// HOTEL PROFILE
+// ============================================
+
+model HotelProfile {
+  id                    String             @id @default(cuid())
+  userId                String             @unique
+  user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Business Info
+  hotelName             String
+  uen                   String             @unique // Unique Entity Number (Singapore)
+  location              String
+  description           String?
+  logoUrl               String?
+
+  // Verification
+  verificationStatus    VerificationStatus @default(PENDING)
+  verificationNote      String?
+  verifiedAt            DateTime?
+  verifiedByAdminId     String?
+
+  // Subscription
+  subscriptionActive    Boolean            @default(false)
+
+  // Tier System (based on hours hired)
+  totalHoursHired       Float              @default(0)
+  tier                  Tier               @default(SILVER)
+
+  // Rating (aggregated from worker reviews)
+  averageRating         Float?
+  totalReviews          Int                @default(0)
+
+  // Status
+  isActive              Boolean            @default(true)
+  isBanned              Boolean            @default(false)
+  bannedReason          String?
+
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  // Relations
+  moodBoard             MoodBoard?
+  jobPostings           JobPosting[]
+  shifts                Shift[]            @relation("HotelShifts")
+
+  @@index([verificationStatus])
+  @@index([uen])
+  @@index([tier])
+}
+
+// ============================================
+// MOOD BOARD (Hotel Culture Display)
+// ============================================
+
+model MoodBoard {
+  id            String           @id @default(cuid())
+  hotelId       String           @unique
+  hotel         HotelProfile     @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+
+  title         String?
+  description   String?
+
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  // Relations
+  items         MoodBoardItem[]
+}
+
+model MoodBoardItem {
+  id            String    @id @default(cuid())
+  moodBoardId   String
+  moodBoard     MoodBoard @relation(fields: [moodBoardId], references: [id], onDelete: Cascade)
+
+  type          String    // "image" | "text"
+  content       String    // URL for images, text content for text
+  displayOrder  Int       @default(0)
+
+  createdAt     DateTime  @default(now())
+}
+
+// ============================================
+// JOB POSTING
+// ============================================
+
+model JobPosting {
+  id            String       @id @default(cuid())
+  hotelId       String
+  hotel         HotelProfile @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+
+  // Job Details
+  title         String       // e.g., "Front Desk", "Housekeeping"
+  description   String?
+  hourlyPay     Float
+  location      String       // Specific location/branch
+  note          String?      // Additional notes
+
+  // Shift Timing
+  shiftDate     DateTime
+  startTime     DateTime
+  endTime       DateTime
+  totalHours    Float
+
+  // Status
+  isActive      Boolean      @default(true)
+  isFilled      Boolean      @default(false)
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  // Relations
+  applications  Application[]
+  shift         Shift?
+
+  @@index([hotelId])
+  @@index([shiftDate])
+  @@index([isActive])
+}
+
+// ============================================
+// APPLICATION (Worker applies to Job)
+// ============================================
+
+model Application {
+  id            String            @id @default(cuid())
+  jobPostingId  String
+  jobPosting    JobPosting        @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+  workerId      String
+  worker        WorkerProfile     @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  status        ApplicationStatus @default(PENDING)
+  declineReason String?
+
+  // 12-Hour Rule Tracking
+  appliedAt     DateTime          @default(now())
+  respondedAt   DateTime?
+  
+  // Flag to prevent decline within 12 hours of shift
+  isLocked      Boolean           @default(false)
+
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@unique([jobPostingId, workerId])
+  @@index([status])
+  @@index([workerId])
+}
+
+// ============================================
+// SHIFT (Confirmed Work Assignment)
+// ============================================
+
+model Shift {
+  id            String        @id @default(cuid())
+  jobPostingId  String        @unique
+  jobPosting    JobPosting    @relation(fields: [jobPostingId], references: [id])
+  workerId      String
+  worker        WorkerProfile @relation("WorkerShifts", fields: [workerId], references: [id])
+  hotelId       String
+  hotel         HotelProfile  @relation("HotelShifts", fields: [hotelId], references: [id])
+
+  // Shift Details (copied from job posting for historical record)
+  shiftDate     DateTime
+  startTime     DateTime
+  endTime       DateTime
+  totalHours    Float
+  hourlyPay     Float
+
+  // Completion Status
+  isCompleted   Boolean       @default(false)
+  completedAt   DateTime?
+  
+  // Payment Status (tracked but processed externally)
+  estimatedPay  Float
+  isPaid        Boolean       @default(false)
+  paidAt        DateTime?
+
+  // Two-Way Rating System
+  // Rating given TO the Hotel BY the Worker
+  hotelRating   Int?          // 1-5 stars
+  hotelReview   String?
+  
+  // Rating given TO the Worker BY the Hotel
+  workerRating  Int?          // 1-5 stars
+  workerReview  String?
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([workerId])
+  @@index([hotelId])
+  @@index([shiftDate])
+}
+
+// ============================================
+// ADMIN PROFILE
+// ============================================
+
+model AdminProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  firstName     String
+  lastName      String
+  
+  // Permissions (for future extensibility)
+  canVerifyUsers    Boolean @default(true)
+  canBanUsers       Boolean @default(true)
+  canViewFinancials Boolean @default(true)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// NOTE: Message and Conversation models defined at end of file
+
+// ============================================
+// CONTACT FORM SUBMISSIONS (for guests)
+// ============================================
+
+model ContactSubmission {
+  id            String   @id @default(cuid())
+  
+  // Sender Info
+  name          String
+  email         String
+  phone         String?
+  
+  // Message
+  subject       String
+  message       String
+  
+  // Routing
+  isFromRegisteredUser Boolean @default(false)
+  registeredUserId     String?
+  
+  // Status
+  isResolved    Boolean  @default(false)
+  resolvedAt    DateTime?
+  resolvedByAdminId String?
+  adminResponse String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([isResolved])
+  @@index([isFromRegisteredUser])
+}
+
+// ============================================
+// TRAINING MODULES (Shyft Academy)
+// ============================================
+
+model TrainingModule {
+  id            String   @id @default(cuid())
+  
+  title         String
+  description   String?
+  category      String   // "boutique_hotels", "capsule_hotels", "serviced_apartments"
+  content       String   // Rich text content or video URL
+  displayOrder  Int      @default(0)
+  
+  // Progress tracking
+  estimatedMinutes Int   @default(10)
+  
+  isActive      Boolean  @default(true)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  progress      TrainingProgress[]
+
+  @@index([category])
+  @@index([displayOrder])
+}
+
+model TrainingProgress {
+  id            String         @id @default(cuid())
+  workerId      String
+  moduleId      String
+  module        TrainingModule @relation(fields: [moduleId], references: [id])
+
+  isCompleted   Boolean        @default(false)
+  completedAt   DateTime?
+  
+  // Quiz score if applicable
+  quizScore     Int?
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@unique([workerId, moduleId])
+  @@index([workerId])
+}
+
+// ============================================
+// MESSAGING SYSTEM
+// ============================================
+
+model Conversation {
+  id            String    @id @default(cuid())
+  
+  // Participants (User IDs)
+  participantOneId String
+  participantOne   User    @relation("ConversationsAsOne", fields: [participantOneId], references: [id])
+  participantTwoId String
+  participantTwo   User    @relation("ConversationsAsTwo", fields: [participantTwoId], references: [id])
+  
+  // Context (optional link to shift/job)
+  shiftId       String?
+  jobPostingId  String?
+  
+  // Type of conversation
+  isSupport     Boolean   @default(false)  // true = Admin support chat
+  
+  // Priority (cached from highest tier participant)
+  priorityTier  Tier      @default(SILVER)
+  
+  // Status
+  lastMessageAt DateTime  @default(now())
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  messages      Message[]
+  
+  @@unique([participantOneId, participantTwoId])
+  @@index([participantOneId])
+  @@index([participantTwoId])
+  @@index([lastMessageAt])
+  @@index([priorityTier])
+}
+
+model Message {
+  id             String      @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  // Sender
+  senderId       String
+  sender         User        @relation("SentMessages", fields: [senderId], references: [id])
+  
+  // Receiver (for direct messages)
+  receiverId     String
+  receiver       User        @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  
+  // Content
+  content        String
+  messageType    MessageType @default(HOTEL_TO_WORKER)
+  
+  // Read status
+  isRead         Boolean     @default(false)
+  readAt         DateTime?
+  
+  createdAt      DateTime    @default(now())
+  
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([createdAt])
+}
