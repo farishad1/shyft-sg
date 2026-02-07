@@ -5,22 +5,24 @@ import { auth } from "@/auth";
 export default async function EstablishmentsPage() {
   const session = await auth();
   
-  // 1. Security Check
   if (session?.user?.role !== "ADMIN") {
     return redirect("/");
   }
 
-  // 2. Fetch Data (Hotel Profiles)
+  // SAFETY CHECK: If prisma failed to connect, show error instead of crashing
+  if (!prisma) {
+    return <div>Database connection failed.</div>;
+  }
+
   const establishments = await prisma.hotelProfile.findMany({
     include: {
-      user: true, // Get the login email associated with this profile
+      user: true,
     },
     orderBy: {
       createdAt: "desc",
     },
   });
 
-  // 3. Render the Page
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
