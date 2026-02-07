@@ -12,7 +12,7 @@ import {
     Ban,
     Crown
 } from 'lucide-react';
-import { HotelBanButton } from './HotelBanButton';
+import { HotelActions } from './HotelActions';
 
 export default async function AdminHotelsPage() {
     const session = await auth();
@@ -35,6 +35,7 @@ export default async function AdminHotelsPage() {
         include: {
             user: {
                 select: {
+                    id: true,
                     email: true,
                     createdAt: true
                 }
@@ -160,10 +161,18 @@ export default async function AdminHotelsPage() {
                                         })}
                                     </td>
                                     <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                        <HotelBanButton
-                                            hotelId={hotel.id}
-                                            hotelName={hotel.hotelName}
-                                            isBanned={hotel.isBanned}
+                                        <HotelActions
+                                            userId={hotel.user.id}
+                                            hotelProfileId={hotel.id}
+                                            isActive={!hotel.isBanned}
+                                            isVerified={hotel.verificationStatus === 'VERIFIED'}
+                                            subscriptionActive={hotel.subscriptionActive}
+                                            hotel={{
+                                                name: hotel.hotelName,
+                                                email: hotel.user.email,
+                                                uen: hotel.uen,
+                                                location: hotel.location
+                                            }}
                                         />
                                     </td>
                                 </tr>
