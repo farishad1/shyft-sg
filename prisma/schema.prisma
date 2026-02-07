@@ -101,6 +101,7 @@ model WorkerProfile {
   lastName              String
   dateOfBirth           DateTime
   phoneNumber           String?
+  bio                   String?            // About Me section
   isPhoneVerified       Boolean            @default(false) // SMS verification status
   profileImageUrl       String?
   resumeUrl             String?

@@ -229,20 +229,81 @@ export async function toggleSubscription(hotelProfileId: string) {
 /**
  * Get platform statistics for financial dashboard
  */
+/**
+ * Get platform statistics for financial dashboard
+ */
 export async function getPlatformStats() {
     await verifyAdmin();
 
-    // Total GMV (sum of estimatedPay for completed shifts)
+    // 1. Platform Revenue (Gross)
+    // Sum of estimatedPay for all completed shifts
     const gmvResult = await prisma!.shift.aggregate({
         where: { isCompleted: true },
         _sum: { estimatedPay: true },
         _count: { id: true },
     });
 
-    const totalGMV = gmvResult._sum.estimatedPay || 0;
+    const platformRevenue = gmvResult._sum.estimatedPay || 0;
     const completedShifts = gmvResult._count.id;
 
-    // Total job postings
+    // 2. Admin Revenue (Net)
+    // Logic: 15% of Platform Revenue + (Active Premium Hotels * $99)
+    const activePremiumHotelsCount = await prisma!.hotelProfile.count({
+        where: { subscriptionActive: true, isActive: true },
+    });
+
+    const subscriptionRevenue = activePremiumHotelsCount * 99;
+    const serviceFeeRevenue = platformRevenue * 0.15;
+    const adminRevenue = serviceFeeRevenue + subscriptionRevenue;
+
+    // 3. Monthly Revenue Graph (Last 6 Months)
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5); // Go back 5 months to include current month = 6 total
+    sixMonthsAgo.setDate(1); // Start of that month
+
+    const monthlyShifts = await prisma!.shift.findMany({
+        where: {
+            isCompleted: true,
+            shiftDate: { gte: sixMonthsAgo },
+        },
+        select: {
+            shiftDate: true,
+            estimatedPay: true,
+        },
+        orderBy: { shiftDate: 'asc' },
+    });
+
+    // Group by Month (e.g., "Jan", "Feb")
+    const monthlyRevenueMap = new Map<string, number>();
+
+    // Initialize last 6 months with 0
+    for (let i = 0; i < 6; i++) {
+        const d = new Date();
+        d.setMonth(d.getMonth() - i);
+        const monthName = d.toLocaleString('default', { month: 'short' });
+        monthlyRevenueMap.set(monthName, 0);
+    }
+
+    monthlyShifts.forEach(shift => {
+        const monthName = shift.shiftDate.toLocaleString('default', { month: 'short' });
+        const current = monthlyRevenueMap.get(monthName) || 0;
+        monthlyRevenueMap.set(monthName, current + shift.estimatedPay);
+    });
+
+    // Convert map to array and reverse to show oldest to newest if needed, 
+    // but map iteration order might vary. Better to reconstruct based on time.
+    const monthlyRevenue = [];
+    for (let i = 5; i >= 0; i--) {
+        const d = new Date();
+        d.setMonth(d.getMonth() - i);
+        const monthName = d.toLocaleString('default', { month: 'short' });
+        monthlyRevenue.push({
+            name: monthName,
+            value: monthlyRevenueMap.get(monthName) || 0,
+        });
+    }
+
+    // Other Stats
     const totalJobPostings = await prisma!.jobPosting.count();
 
     // Fill rate
@@ -250,22 +311,17 @@ export async function getPlatformStats() {
         ? (completedShifts / totalJobPostings) * 100
         : 0;
 
-    // Active hotels (subscription active)
+    // Active entities
     const activeHotels = await prisma!.hotelProfile.count({
-        where: { subscriptionActive: true, isActive: true },
-    });
+        where: { isActive: true },
+    }); // Total active hotels, not just premium
 
-    // Potential revenue at $100/month
-    const SUBSCRIPTION_PRICE = 100;
-    const potentialRevenue = activeHotels * SUBSCRIPTION_PRICE;
-
-    // Total workers
     const totalWorkers = await prisma!.workerProfile.count();
     const activeWorkers = await prisma!.workerProfile.count({
         where: { isActive: true, verificationStatus: 'VERIFIED' },
     });
 
-    // Total shifts today
+    // Valid shifts today
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
@@ -277,7 +333,7 @@ export async function getPlatformStats() {
         },
     });
 
-    // Top earners (workers)
+    // Top earners
     const topEarners = await prisma!.shift.groupBy({
         by: ['workerId'],
         where: { isCompleted: true },
@@ -301,7 +357,7 @@ export async function getPlatformStats() {
         })
     );
 
-    // Top spenders (hotels)
+    // Top spenders
     const topSpenders = await prisma!.shift.groupBy({
         by: ['hotelId'],
         where: { isCompleted: true },
@@ -324,10 +380,11 @@ export async function getPlatformStats() {
     );
 
     return {
-        totalGMV,
+        platformRevenue,
+        adminRevenue,
+        monthlyRevenue,
         completedShifts,
         fillRate,
-        potentialRevenue,
         activeHotels,
         totalWorkers,
         activeWorkers,

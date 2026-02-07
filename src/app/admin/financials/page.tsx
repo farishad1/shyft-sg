@@ -2,8 +2,9 @@ import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import Link from 'next/link';
-import { ArrowLeft, DollarSign, TrendingUp, Building2, Users, Calendar, Crown, Target, Briefcase } from 'lucide-react';
+import { ArrowLeft, DollarSign, TrendingUp, Building2, Users, Calendar, Crown, Target, Briefcase, Wallet } from 'lucide-react';
 import { getPlatformStats } from '../actions';
+import { RevenueChart } from './RevenueChart';
 
 export default async function AdminFinancialsPage() {
     const session = await auth();
@@ -33,61 +34,63 @@ export default async function AdminFinancialsPage() {
                 </div>
             </div>
 
-            {/* KPI Cards Row 1 */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+            {/* KPI Cards Row 1: REVENUE */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
                 <KPICard
-                    title="Total Revenue"
-                    value={`$${stats.totalGMV.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-                    subtitle="Platform earnings to date"
+                    title="Platform Revenue (Gross)"
+                    value={`$${stats.platformRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                    subtitle="Total value of shifts served"
                     icon={<DollarSign size={24} />}
                     color="#22c55e"
                 />
                 <KPICard
-                    title="Total Sales"
-                    value={`$${stats.potentialRevenue.toLocaleString()}/mo`}
-                    subtitle={`${stats.activeHotels} active hotels × $100`}
-                    icon={<TrendingUp size={24} />}
+                    title="Admin Revenue (Net)"
+                    value={`$${stats.adminRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                    subtitle="15% Service Fee + Subscriptions"
+                    icon={<Wallet size={24} />}
                     color="var(--accent)"
-                />
-                <KPICard
-                    title="Fill Rate"
-                    value={`${stats.fillRate.toFixed(1)}%`}
-                    subtitle={`${stats.completedShifts} completed shifts`}
-                    icon={<Target size={24} />}
-                    color={stats.fillRate >= 70 ? '#22c55e' : stats.fillRate >= 40 ? '#eab308' : '#ef4444'}
-                />
-                <KPICard
-                    title="Shifts Today"
-                    value={stats.todayShifts.toString()}
-                    subtitle="Active shifts"
-                    icon={<Calendar size={24} />}
-                    color="#3b82f6"
                 />
             </div>
 
-            {/* KPI Cards Row 2 */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-                <KPICard
-                    title="Active Workers"
-                    value={stats.activeWorkers.toString()}
-                    subtitle={`of ${stats.totalWorkers} registered`}
-                    icon={<Users size={24} />}
-                    color="#8b5cf6"
-                />
-                <KPICard
-                    title="Active Hotels"
-                    value={stats.activeHotels.toString()}
-                    subtitle="With subscription"
-                    icon={<Building2 size={24} />}
-                    color="#ec4899"
-                />
+            {/* KPI Cards Row 2: OPERATIONAL */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
                 <KPICard
                     title="Completed Shifts"
                     value={stats.completedShifts.toString()}
                     subtitle="All time"
-                    icon={<Briefcase size={24} />}
-                    color="#14b8a6"
+                    icon={<Briefcase size={20} />}
+                    color="#3b82f6"
                 />
+                <KPICard
+                    title="Fill Rate"
+                    value={`${stats.fillRate.toFixed(1)}%`}
+                    subtitle="Shift success rate"
+                    icon={<Target size={20} />}
+                    color={stats.fillRate >= 70 ? '#22c55e' : stats.fillRate >= 40 ? '#eab308' : '#ef4444'}
+                />
+                <KPICard
+                    title="Active Hotels"
+                    value={stats.activeHotels.toString()}
+                    subtitle="Registered partners"
+                    icon={<Building2 size={20} />}
+                    color="#ec4899"
+                />
+                <KPICard
+                    title="Active Workers"
+                    value={stats.activeWorkers.toString()}
+                    subtitle="Verified & ready"
+                    icon={<Users size={20} />}
+                    color="#8b5cf6"
+                />
+            </div>
+
+            {/* Chart Section */}
+            <div className="card" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <TrendingUp size={20} color="#22c55e" />
+                    Monthly Platform Revenue
+                </h2>
+                <RevenueChart data={stats.monthlyRevenue} />
             </div>
 
             {/* Leaderboards */}
@@ -95,7 +98,7 @@ export default async function AdminFinancialsPage() {
                 {/* Top Earners */}
                 <div className="card" style={{ padding: '1.5rem' }}>
                     <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <Crown size={18} color="var(--accent)" /> Top Earners
+                        <Crown size={18} color="var(--accent)" /> Top Earners (Workers)
                     </h2>
                     {stats.topEarners.length === 0 ? (
                         <p style={{ color: '#888', textAlign: 'center', padding: '2rem' }}>No data yet</p>
@@ -138,7 +141,7 @@ export default async function AdminFinancialsPage() {
                 {/* Top Spenders */}
                 <div className="card" style={{ padding: '1.5rem' }}>
                     <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <Building2 size={18} color="#3b82f6" /> Top Spenders
+                        <Building2 size={18} color="#3b82f6" /> Top Spenders (Hotels)
                     </h2>
                     {stats.topSpenders.length === 0 ? (
                         <p style={{ color: '#888', textAlign: 'center', padding: '2rem' }}>No data yet</p>
