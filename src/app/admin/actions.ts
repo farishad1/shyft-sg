@@ -203,6 +203,34 @@ export async function unverifyUser(userId: string) {
 }
 
 /**
+ * Permanently delete a user and their profile
+ */
+export async function deleteUser(userId: string) {
+    await verifyAdmin();
+
+    const user = await prisma!.user.findUnique({
+        where: { id: userId },
+        include: { workerProfile: true, hotelProfile: true },
+    });
+
+    if (!user) {
+        return { success: false, error: 'User not found' };
+    }
+
+    // Prisma cascade will handle profile deletion due to onDelete: Cascade
+    await prisma!.user.delete({
+        where: { id: userId },
+    });
+
+    revalidatePath('/admin/users');
+    revalidatePath('/admin/hotels');
+    revalidatePath('/admin/verifications');
+    revalidatePath('/admin/establishments');
+
+    return { success: true };
+}
+
+/**
  * Toggle hotel subscription status
  */
 export async function toggleSubscription(hotelProfileId: string) {

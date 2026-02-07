@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { banUser, unbanUser, unverifyUser } from '../actions';
-import { MoreHorizontal, Eye, Ban, ShieldX, RotateCcw, X } from 'lucide-react';
+import { banUser, unbanUser, unverifyUser, deleteUser } from '../actions';
+import { MoreHorizontal, Eye, Ban, ShieldX, RotateCcw, X, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface WorkerDetails {
@@ -25,6 +25,7 @@ export function UserActions({ userId, isActive, isVerified, worker }: UserAction
     const [showDropdown, setShowDropdown] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [showBanModal, setShowBanModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [banReason, setBanReason] = useState('');
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
@@ -51,6 +52,14 @@ export function UserActions({ userId, isActive, isVerified, worker }: UserAction
         startTransition(async () => {
             await unverifyUser(userId);
             setShowDropdown(false);
+            router.refresh();
+        });
+    };
+
+    const handleDelete = () => {
+        startTransition(async () => {
+            await deleteUser(userId);
+            setShowDeleteModal(false);
             router.refresh();
         });
     };
@@ -160,6 +169,26 @@ export function UserActions({ userId, isActive, isVerified, worker }: UserAction
                                     <ShieldX size={16} /> Un-Verify
                                 </button>
                             )}
+
+                            <div style={{ height: '1px', background: '#333', margin: '0.25rem 0' }} />
+
+                            <button
+                                onClick={() => { setShowDeleteModal(true); setShowDropdown(false); }}
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem 1rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    background: 'none',
+                                    border: 'none',
+                                    color: '#dc2626',
+                                    cursor: 'pointer',
+                                    textAlign: 'left'
+                                }}
+                            >
+                                <Trash2 size={16} /> Delete User
+                            </button>
                         </div>
                     </>
                 )}
@@ -267,6 +296,57 @@ export function UserActions({ userId, isActive, isVerified, worker }: UserAction
                                 style={{ flex: 1, background: '#ef4444', color: '#fff' }}
                             >
                                 {isPending ? 'Banning...' : 'Ban User'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Delete Modal */}
+            {showDeleteModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0,0,0,0.8)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 100
+                }}>
+                    <div className="card" style={{ width: '100%', maxWidth: '400px', padding: '1.5rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                            <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#dc2626' }}>Delete User</h2>
+                            <button onClick={() => setShowDeleteModal(false)} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer' }}>
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <p style={{ marginBottom: '1rem', color: '#888' }}>
+                            Are you sure you want to <strong style={{ color: '#dc2626' }}>permanently delete</strong>{' '}
+                            <strong style={{ color: '#fff' }}>{worker.name}</strong>?
+                        </p>
+                        <p style={{ marginBottom: '1.5rem', color: '#ef4444', fontSize: '0.875rem' }}>
+                            ⚠️ This action cannot be undone. All data will be permanently removed.
+                        </p>
+
+                        <div style={{ display: 'flex', gap: '0.75rem' }}>
+                            <button
+                                onClick={() => setShowDeleteModal(false)}
+                                className="btn btn-ghost"
+                                style={{ flex: 1 }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                disabled={isPending}
+                                className="btn"
+                                style={{ flex: 1, background: '#dc2626', color: '#fff' }}
+                            >
+                                {isPending ? 'Deleting...' : 'Delete Forever'}
                             </button>
                         </div>
                     </div>
