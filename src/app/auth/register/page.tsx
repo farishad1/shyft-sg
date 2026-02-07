@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { WorkPassType } from '@prisma/client';
 import { WORK_PASS_LABELS } from '@/lib/constants';
+import { CheckCircle2, Phone, Send } from 'lucide-react';
 
 function RegisterForm() {
     const router = useRouter();
@@ -15,6 +16,13 @@ function RegisterForm() {
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // SMS Verification State
+    const [showOtpInput, setShowOtpInput] = useState(false);
+    const [otpCode, setOtpCode] = useState('');
+    const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+    const [otpError, setOtpError] = useState<string | null>(null);
+    const [isSendingCode, setIsSendingCode] = useState(false);
+
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -22,7 +30,7 @@ function RegisterForm() {
         lastName: '',
         dateOfBirth: '',
         phoneNumber: '',
-        workPassType: 'CITIZEN' as WorkPassType,
+        workPassType: 'CITIZEN_PR' as WorkPassType,
         workPassNumber: '',
         schoolName: '',
         hasBasicEnglish: false,
@@ -41,14 +49,50 @@ function RegisterForm() {
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
         }
+        // Reset phone verification if phone number changes
+        if (name === 'phoneNumber') {
+            setIsPhoneVerified(false);
+            setShowOtpInput(false);
+            setOtpCode('');
+        }
+    };
+
+    const handleSendCode = async () => {
+        if (!formData.phoneNumber || formData.phoneNumber.length < 8) {
+            setOtpError('Please enter a valid phone number');
+            return;
+        }
+        setIsSendingCode(true);
+        setOtpError(null);
+        // Simulate sending code (mock delay)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setIsSendingCode(false);
+        setShowOtpInput(true);
+    };
+
+    const handleVerifyCode = () => {
+        if (otpCode === '123456') {
+            setIsPhoneVerified(true);
+            setOtpError(null);
+            setShowOtpInput(false);
+        } else {
+            setOtpError('Invalid code. Please try again.');
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // For workers, require phone verification
+        if (role === 'WORKER' && !isPhoneVerified) {
+            setError('Please verify your phone number before registering.');
+            return;
+        }
+
         setIsSubmitting(true);
         setError(null);
 
-        const payload: any = {
+        const payload: Record<string, unknown> = {
             email: formData.email,
             password: formData.password,
             role,
@@ -58,9 +102,10 @@ function RegisterForm() {
             payload.firstName = formData.firstName;
             payload.lastName = formData.lastName;
             payload.dateOfBirth = formData.dateOfBirth;
-            payload.phoneNumber = formData.phoneNumber;
+            payload.phoneNumber = '+65' + formData.phoneNumber;
             payload.workPassType = formData.workPassType;
             payload.workPassNumber = formData.workPassNumber;
+            payload.isPhoneVerified = isPhoneVerified;
             if (formData.workPassType === 'STUDENT_PASS') {
                 payload.schoolName = formData.schoolName;
             }
@@ -165,9 +210,90 @@ function RegisterForm() {
                             <p className="text-muted" style={{ fontSize: '0.75rem', marginTop: '0.25rem' }}>Must be at least 13 years old</p>
                         </div>
 
+                        {/* Phone Number with SMS Verification */}
                         <div>
                             <label className="label">Phone Number</label>
-                            <input name="phoneNumber" type="tel" required className="input" value={formData.phoneNumber} onChange={handleChange} />
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <div style={{
+                                    padding: '0.75rem 1rem',
+                                    background: '#222',
+                                    border: '1px solid var(--border)',
+                                    borderRadius: 'var(--radius-md)',
+                                    color: '#888',
+                                    display: 'flex',
+                                    alignItems: 'center'
+                                }}>
+                                    +65
+                                </div>
+                                <input
+                                    name="phoneNumber"
+                                    type="tel"
+                                    required
+                                    className="input"
+                                    style={{ flex: 1 }}
+                                    placeholder="8XXX XXXX"
+                                    value={formData.phoneNumber}
+                                    onChange={handleChange}
+                                    maxLength={8}
+                                    disabled={isPhoneVerified}
+                                />
+                                {isPhoneVerified ? (
+                                    <div style={{
+                                        padding: '0.75rem 1rem',
+                                        background: 'rgba(34,197,94,0.1)',
+                                        border: '1px solid #22c55e',
+                                        borderRadius: 'var(--radius-md)',
+                                        color: '#22c55e',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem'
+                                    }}>
+                                        <CheckCircle2 size={16} /> Verified
+                                    </div>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        className="btn btn-ghost"
+                                        onClick={handleSendCode}
+                                        disabled={isSendingCode || !formData.phoneNumber}
+                                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                                    >
+                                        {isSendingCode ? 'Sending...' : <><Send size={16} /> Send Code</>}
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* OTP Input */}
+                            {showOtpInput && !isPhoneVerified && (
+                                <div style={{ marginTop: '0.75rem', padding: '1rem', background: '#111', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+                                    <p style={{ fontSize: '0.875rem', color: '#888', marginBottom: '0.5rem' }}>
+                                        Enter the 6-digit code sent to +65 {formData.phoneNumber}
+                                    </p>
+                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                        <input
+                                            type="text"
+                                            className="input"
+                                            placeholder="Enter 6-digit code"
+                                            value={otpCode}
+                                            onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                            style={{ flex: 1, letterSpacing: '0.25rem', fontWeight: 600 }}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary"
+                                            onClick={handleVerifyCode}
+                                            disabled={otpCode.length !== 6}
+                                        >
+                                            Verify
+                                        </button>
+                                    </div>
+                                    {otpError && <p style={{ color: '#ef4444', fontSize: '0.875rem', marginTop: '0.5rem' }}>{otpError}</p>}
+                                    <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.5rem' }}>
+                                        <Phone size={12} style={{ display: 'inline', marginRight: '0.25rem' }} />
+                                        For testing, use code: <strong>123456</strong>
+                                    </p>
+                                </div>
+                            )}
                         </div>
 
                         <div>
@@ -242,7 +368,7 @@ function RegisterForm() {
                     type="submit"
                     className="btn btn-primary btn-lg"
                     style={{ width: '100%', marginTop: '1rem' }}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || (role === 'WORKER' && !isPhoneVerified)}
                 >
                     {isSubmitting ? 'Creating Account...' : `Register as ${role === 'WORKER' ? 'Worker' : 'Hotel'}`}
                 </button>

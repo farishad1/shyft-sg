@@ -19,10 +19,15 @@ enum Role {
 }
 
 enum WorkPassType {
-  CITIZEN
-  PERMANENT_RESIDENT
-  STUDENT_PASS
-  LTVP
+  CITIZEN_PR                  // Singapore Citizen / PR
+  EMPLOYMENT_PASS
+  S_PASS
+  WORK_PERMIT
+  DEPENDENT_PASS_LTVP         // Dependent Pass / Long Term Visitor Pass
+  STUDENT_PASS                // Student Pass (Foreigner)
+  TEMPORARY_EMPLOYMENT_PASS
+  PROFESSIONAL_VISIT_PASS
+  OTHER
 }
 
 enum Tier {
@@ -96,6 +101,7 @@ model WorkerProfile {
   lastName              String
   dateOfBirth           DateTime
   phoneNumber           String?
+  isPhoneVerified       Boolean            @default(false) // SMS verification status
   profileImageUrl       String?
   resumeUrl             String?
 
@@ -110,6 +116,7 @@ model WorkerProfile {
   verificationNote      String?
   verifiedAt            DateTime?
   verifiedByAdminId     String?
+  isDocumentVerified    Boolean            @default(false) // Admin must verify docs before first payout
 
   // Skills & Training
   hasBasicEnglish       Boolean            @default(false)
@@ -123,6 +130,7 @@ model WorkerProfile {
 
   // Strike System (cancellation <12 hours before shift)
   strikes               Int                @default(0)
+  lateCancellationCount Int                @default(0)  // 24-hour rule violations
 
   // Rating (aggregated from hotel reviews)
   averageRating         Float?
@@ -160,6 +168,10 @@ model HotelProfile {
   location              String
   description           String?
   logoUrl               String?
+  
+  // Map coordinates for Google Maps integration
+  latitude              Float?
+  longitude             Float?
 
   // Verification
   verificationStatus    VerificationStatus @default(PENDING)
@@ -173,6 +185,10 @@ model HotelProfile {
   // Tier System (based on hours hired)
   totalHoursHired       Float              @default(0)
   tier                  Tier               @default(SILVER)
+  
+  // Premium Status (automatically granted after 25+ shifts filled)
+  isPremium             Boolean            @default(false)
+  shiftsFilled          Int                @default(0)
 
   // Rating (aggregated from worker reviews)
   averageRating         Float?
@@ -252,6 +268,7 @@ model JobPosting {
   // Status
   isActive      Boolean      @default(true)
   isFilled      Boolean      @default(false)
+  slotsOpen     Int          @default(5)  // Number of open slots for scarcity display
 
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
@@ -278,6 +295,11 @@ model Application {
 
   status        ApplicationStatus @default(PENDING)
   declineReason String?
+
+  // Cancellation Tracking (24-Hour Rule)
+  cancellationReason  String?
+  cancelledAt         DateTime?
+  isLateCancellation  Boolean          @default(false)
 
   // 12-Hour Rule Tracking
   appliedAt     DateTime          @default(now())
@@ -508,5 +530,33 @@ model Message {
   @@index([conversationId])
   @@index([senderId])
   @@index([receiverId])
+  @@index([createdAt])
+}
+
+// ============================================
+// CONTACT REQUESTS (Landing Page Form)
+// ============================================
+
+model ContactRequest {
+  id            String   @id @default(cuid())
+  
+  // Sender Info
+  name          String
+  email         String
+  phone         String?
+  company       String?
+  
+  // Message
+  subject       String
+  message       String
+  
+  // Status
+  isRead        Boolean  @default(false)
+  readAt        DateTime?
+  respondedAt   DateTime?
+  
+  createdAt     DateTime @default(now())
+  
+  @@index([isRead])
   @@index([createdAt])
 }

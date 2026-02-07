@@ -10,19 +10,19 @@ const FAQ_ITEMS = [
     },
     {
         question: 'Who can work on Shyft Sg?',
-        answer: 'Workers must be at least 13 years old and have the legal right to work in Singapore (Citizens, PRs, Student Pass holders, or LTVP holders). All workers must verify their English and computer skills, and complete our Shyft Academy training before accessing shifts.',
+        answer: 'Workers must be at least 13 years old and have the legal right to work in Singapore (Citizens, PRs, Student Pass holders, or other valid work passes). Once your profile is approved, you can book shifts instantly.',
     },
     {
         question: 'How does payment work?',
-        answer: 'Payments are processed directly by the hotels. Shyft Sg provides a tracking system where you can view your estimated earnings and shift history, but the actual payment goes from the hotel directly to you.',
+        answer: 'Payment goes direct from hotel to you. Shyft Sg provides a tracking system where you can view your estimated earnings and shift history.',
     },
     {
         question: 'What are the Worker Tiers?',
-        answer: 'Workers progress through tiers based on hours worked: Silver (0-50 hours), Gold (51-200 hours), and Platinum (200+ hours). Higher tiers unlock perks like priority admin support.',
+        answer: 'Workers progress through tiers based on hours worked: Silver (0-50 hours), Gold (50+ hours), and Platinum (200+ hours). Higher tiers unlock perks like priority admin support and exclusive rewards.',
     },
     {
         question: 'Can I cancel a shift after applying?',
-        answer: 'Cancellations made more than 12 hours before a shift start time are allowed. However, cancelling within 12 hours of a shift may result in a strike on your account. Multiple strikes can affect your standing on the platform.',
+        answer: 'Cancellations made more than 24 hours before a shift start time are allowed. However, cancelling within 24 hours of a shift may result in account suspension. We take reliability seriously.',
     },
     {
         question: 'How do hotels get verified?',

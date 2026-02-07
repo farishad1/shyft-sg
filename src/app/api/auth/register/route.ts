@@ -48,6 +48,11 @@ export async function POST(request: NextRequest) {
 
             const workerData = workerResult.data;
 
+            // AUTO-VERIFY LOGIC: If phone is verified, set to VERIFIED immediately
+            // Workers can book shifts, but isDocumentVerified stays false for admin review before payout
+            const isPhoneVerified = body.isPhoneVerified === true;
+            const autoVerifyStatus = isPhoneVerified ? 'VERIFIED' : 'PENDING';
+
             const newUser = await prisma.user.create({
                 data: {
                     email,
@@ -59,12 +64,17 @@ export async function POST(request: NextRequest) {
                             lastName: workerData.lastName,
                             dateOfBirth: workerData.dateOfBirth,
                             phoneNumber: workerData.phoneNumber,
+                            isPhoneVerified: isPhoneVerified,
                             workPassType: workerData.workPassType,
                             workPassNumber: workerData.workPassNumber,
                             schoolName: workerData.schoolName,
                             hasBasicEnglish: workerData.hasBasicEnglish,
                             hasComputerSkills: workerData.hasComputerSkills,
-                            // Other fields use defaults (verificationStatus: PENDING)
+                            // AUTO-VERIFY: Set status based on phone verification
+                            verificationStatus: autoVerifyStatus,
+                            verifiedAt: isPhoneVerified ? new Date() : null,
+                            // SAFETY NET: Document still needs admin verification before payout
+                            isDocumentVerified: false,
                         },
                     },
                 },
@@ -74,7 +84,10 @@ export async function POST(request: NextRequest) {
                 success: true,
                 userId: newUser.id,
                 role: 'WORKER',
-                message: 'Account created successfully. Please log in.'
+                isVerified: isPhoneVerified,
+                message: isPhoneVerified
+                    ? 'Account created and verified! You can start booking shifts.'
+                    : 'Account created. Pending verification.'
             });
 
         } else if (role === 'HOTEL') {

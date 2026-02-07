@@ -2,187 +2,176 @@ import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import Link from 'next/link';
-import { Building2, Search, ArrowLeft, Crown, Briefcase, DollarSign } from 'lucide-react';
-import { HotelActions } from './HotelActions';
+import {
+    ArrowLeft,
+    Building2,
+    MapPin,
+    Star,
+    CheckCircle2,
+    Clock,
+    Ban,
+    Crown
+} from 'lucide-react';
+import { HotelBanButton } from './HotelBanButton';
 
-export default async function AdminHotelsPage({
-    searchParams,
-}: {
-    searchParams: { q?: string };
-}) {
+export default async function AdminHotelsPage() {
     const session = await auth();
     if (!session?.user?.id) redirect('/auth/login');
 
     if (!prisma) return <div>Database not connected</div>;
 
+    // Verify admin role
     const user = await prisma.user.findUnique({
         where: { id: session.user.id },
+        include: { adminProfile: true }
     });
 
     if (user?.role !== 'ADMIN') {
-        redirect('/dashboard');
+        redirect('/');
     }
 
-    const searchQuery = searchParams.q || '';
-
-    // Fetch all hotels with optional search
+    // Fetch all hotels with their profiles
     const hotels = await prisma.hotelProfile.findMany({
-        where: searchQuery ? {
-            OR: [
-                { hotelName: { contains: searchQuery, mode: 'insensitive' } },
-                { uen: { contains: searchQuery, mode: 'insensitive' } },
-                { user: { email: { contains: searchQuery, mode: 'insensitive' } } },
-            ],
-        } : {},
         include: {
-            user: true,
-            shifts: {
-                where: { isCompleted: true },
-                select: { estimatedPay: true },
-            },
-            jobPostings: {
-                select: { id: true },
-            },
+            user: {
+                select: {
+                    email: true,
+                    createdAt: true
+                }
+            }
         },
-        orderBy: [
-            { tier: 'desc' },
-            { totalHoursHired: 'desc' },
-        ],
+        orderBy: { createdAt: 'desc' }
     });
 
+    const activeHotels = hotels.filter(h => !h.isBanned);
+    const bannedHotels = hotels.filter(h => h.isBanned);
+
     return (
-        <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-                <Link href="/admin" className="btn btn-ghost btn-sm">
-                    <ArrowLeft size={18} />
-                </Link>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+            <Link href="/admin" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#888', textDecoration: 'none', marginBottom: '1.5rem' }}>
+                <ArrowLeft size={18} /> Back to Admin
+            </Link>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <div>
-                    <h1 style={{ fontSize: '2rem', fontWeight: 700 }}>Hotel Management</h1>
-                    <p style={{ color: '#888' }}>{hotels.length} hotels registered</p>
+                    <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.25rem' }}>Hotel Management</h1>
+                    <p style={{ color: '#888' }}>View and manage registered hotels</p>
+                </div>
+
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                    <div style={{ textAlign: 'center', padding: '0.75rem 1rem', background: '#111', borderRadius: 'var(--radius-md)' }}>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#22c55e' }}>{activeHotels.length}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#888' }}>Active</div>
+                    </div>
+                    <div style={{ textAlign: 'center', padding: '0.75rem 1rem', background: '#111', borderRadius: 'var(--radius-md)' }}>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#ef4444' }}>{bannedHotels.length}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#888' }}>Banned</div>
+                    </div>
                 </div>
             </div>
 
-            {/* Search */}
-            <form action="/admin/hotels" method="GET" style={{ marginBottom: '1.5rem' }}>
-                <div style={{ display: 'flex', gap: '0.75rem' }}>
-                    <div style={{ flex: 1, position: 'relative' }}>
-                        <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#888' }} />
-                        <input
-                            type="text"
-                            name="q"
-                            defaultValue={searchQuery}
-                            placeholder="Search by hotel name, UEN, or email..."
-                            className="input"
-                            style={{ paddingLeft: '2.75rem', width: '100%' }}
-                        />
-                    </div>
-                    <button type="submit" className="btn btn-primary">Search</button>
+            {hotels.length === 0 ? (
+                <div className="card" style={{ padding: '3rem', textAlign: 'center', color: '#888' }}>
+                    <Building2 size={48} style={{ opacity: 0.3, marginBottom: '1rem' }} />
+                    <h3 style={{ fontWeight: 600, marginBottom: '0.5rem' }}>No Hotels Registered</h3>
+                    <p>Hotels will appear here when they sign up.</p>
                 </div>
-            </form>
-
-            {/* Hotels Table */}
-            <div className="card" style={{ overflow: 'hidden' }}>
-                <div style={{ overflowX: 'auto' }}>
+            ) : (
+                <div className="card" style={{ overflow: 'hidden' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
-                            <tr style={{ borderBottom: '1px solid var(--border)', background: '#111' }}>
-                                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600 }}>Hotel Name</th>
-                                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600 }}>UEN</th>
-                                <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600 }}>Tier</th>
-                                <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600 }}>Subscription</th>
-                                <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600 }}>Status</th>
-                                <th style={{ padding: '1rem', textAlign: 'right', fontWeight: 600 }}>Jobs</th>
-                                <th style={{ padding: '1rem', textAlign: 'right', fontWeight: 600 }}>Total Spent</th>
-                                <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600 }}>Actions</th>
+                            <tr style={{ background: '#111', borderBottom: '1px solid #333' }}>
+                                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, fontSize: '0.875rem' }}>Hotel</th>
+                                <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, fontSize: '0.875rem' }}>Location</th>
+                                <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600, fontSize: '0.875rem' }}>Status</th>
+                                <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600, fontSize: '0.875rem' }}>Rating</th>
+                                <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600, fontSize: '0.875rem' }}>Joined</th>
+                                <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600, fontSize: '0.875rem' }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {hotels.map((hotel) => {
-                                const totalSpent = hotel.shifts.reduce((sum, s) => sum + s.estimatedPay, 0);
-                                return (
-                                    <tr key={hotel.id} style={{ borderBottom: '1px solid #222' }}>
-                                        <td style={{ padding: '1rem' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                                <div style={{
-                                                    width: '2rem',
-                                                    height: '2rem',
-                                                    borderRadius: 'var(--radius-sm)',
-                                                    background: hotel.tier === 'PLATINUM' ? '#333' : hotel.tier === 'GOLD' ? 'var(--accent)' : '#222',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    color: hotel.tier === 'GOLD' ? '#000' : '#fff',
-                                                    border: hotel.tier === 'PLATINUM' ? '2px solid #E5E4E2' : 'none'
-                                                }}>
-                                                    🏨
-                                                </div>
-                                                <div>
-                                                    <span style={{ fontWeight: 500 }}>{hotel.hotelName}</span>
-                                                    {hotel.tier === 'PLATINUM' && <Crown size={12} color="#E5E4E2" style={{ marginLeft: '0.5rem' }} />}
-                                                    {hotel.tier === 'GOLD' && <Crown size={12} color="var(--accent)" style={{ marginLeft: '0.5rem' }} />}
-                                                </div>
+                            {hotels.map((hotel) => (
+                                <tr
+                                    key={hotel.id}
+                                    style={{
+                                        borderBottom: '1px solid #222',
+                                        background: hotel.isBanned ? 'rgba(239,68,68,0.05)' : 'transparent',
+                                        opacity: hotel.isBanned ? 0.6 : 1
+                                    }}
+                                >
+                                    <td style={{ padding: '1rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                            <div style={{
+                                                width: '2.5rem',
+                                                height: '2.5rem',
+                                                borderRadius: '50%',
+                                                background: '#222',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}>
+                                                <Building2 size={16} color="#888" />
                                             </div>
-                                        </td>
-                                        <td style={{ padding: '1rem', color: '#888', fontFamily: 'monospace' }}>{hotel.uen}</td>
-                                        <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                            <span className={`badge badge-${hotel.tier.toLowerCase()}`}>{hotel.tier}</span>
-                                        </td>
-                                        <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                            {hotel.subscriptionActive ? (
-                                                <span className="badge badge-verified">Active</span>
-                                            ) : (
-                                                <span className="badge" style={{ background: '#333', color: '#888' }}>Inactive</span>
-                                            )}
-                                        </td>
-                                        <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                            {!hotel.isActive ? (
-                                                <span className="badge badge-declined">Banned</span>
-                                            ) : hotel.verificationStatus === 'VERIFIED' ? (
-                                                <span className="badge badge-verified">Verified</span>
-                                            ) : hotel.verificationStatus === 'PENDING' ? (
-                                                <span className="badge badge-pending">Pending</span>
-                                            ) : (
-                                                <span className="badge badge-declined">Declined</span>
-                                            )}
-                                        </td>
-                                        <td style={{ padding: '1rem', textAlign: 'right' }}>
-                                            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.25rem' }}>
-                                                <Briefcase size={14} color="#888" />
-                                                {hotel.jobPostings.length}
+                                            <div>
+                                                <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                    {hotel.hotelName}
+                                                    {hotel.isPremium && <Crown size={14} color="var(--accent)" />}
+                                                </div>
+                                                <div style={{ fontSize: '0.75rem', color: '#888' }}>{hotel.user.email}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style={{ padding: '1rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#aaa' }}>
+                                            <MapPin size={14} />
+                                            {hotel.location}
+                                        </div>
+                                    </td>
+                                    <td style={{ padding: '1rem', textAlign: 'center' }}>
+                                        {hotel.isBanned ? (
+                                            <span className="badge badge-declined" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                                                <Ban size={12} /> Banned
                                             </span>
-                                        </td>
-                                        <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 500, color: '#ef4444' }}>
-                                            ${totalSpent.toFixed(2)}
-                                        </td>
-                                        <td style={{ padding: '1rem', textAlign: 'center' }}>
-                                            <HotelActions
-                                                userId={hotel.userId}
-                                                hotelProfileId={hotel.id}
-                                                isActive={hotel.isActive}
-                                                isVerified={hotel.verificationStatus === 'VERIFIED'}
-                                                subscriptionActive={hotel.subscriptionActive}
-                                                hotel={{
-                                                    name: hotel.hotelName,
-                                                    email: hotel.user.email,
-                                                    uen: hotel.uen,
-                                                    location: hotel.location || 'N/A',
-                                                }}
-                                            />
-                                        </td>
-                                    </tr>
-                                );
-                            })}
+                                        ) : hotel.verificationStatus === 'VERIFIED' ? (
+                                            <span className="badge badge-verified" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                                                <CheckCircle2 size={12} /> Verified
+                                            </span>
+                                        ) : (
+                                            <span className="badge badge-pending" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                                                <Clock size={12} /> Pending
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td style={{ padding: '1rem', textAlign: 'center' }}>
+                                        {hotel.averageRating ? (
+                                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent)' }}>
+                                                <Star size={14} fill="var(--accent)" />
+                                                {hotel.averageRating.toFixed(1)}
+                                            </span>
+                                        ) : (
+                                            <span style={{ color: '#666' }}>-</span>
+                                        )}
+                                    </td>
+                                    <td style={{ padding: '1rem', textAlign: 'center', fontSize: '0.875rem', color: '#888' }}>
+                                        {new Date(hotel.createdAt).toLocaleDateString('en-SG', {
+                                            day: 'numeric',
+                                            month: 'short',
+                                            year: 'numeric'
+                                        })}
+                                    </td>
+                                    <td style={{ padding: '1rem', textAlign: 'center' }}>
+                                        <HotelBanButton
+                                            hotelId={hotel.id}
+                                            hotelName={hotel.hotelName}
+                                            isBanned={hotel.isBanned}
+                                        />
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>
-
-                {hotels.length === 0 && (
-                    <div style={{ padding: '3rem', textAlign: 'center', color: '#888' }}>
-                        <Building2 size={40} style={{ opacity: 0.3, marginBottom: '1rem' }} />
-                        <p>No hotels found{searchQuery && ` matching "${searchQuery}"`}</p>
-                    </div>
-                )}
-            </div>
+            )}
         </div>
     );
 }

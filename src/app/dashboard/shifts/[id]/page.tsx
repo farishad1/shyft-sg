@@ -31,10 +31,6 @@ export default async function ShiftDetailPage({
         redirect('/dashboard');
     }
 
-    if (workerProfile.trainingProgress < 100) {
-        redirect('/academy');
-    }
-
     // Fetch job posting with hotel info
     const jobPosting = await prisma.jobPosting.findUnique({
         where: { id: params.id },
@@ -158,9 +154,32 @@ export default async function ShiftDetailPage({
                         }}>
                             <MapPin size={18} color="var(--accent)" />
                         </div>
-                        <div>
+                        <div style={{ flex: 1 }}>
                             <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>Location</div>
                             <div style={{ fontWeight: 500 }}>{jobPosting.location}</div>
+                            {jobPosting.hotel.latitude && jobPosting.hotel.longitude && (
+                                <a
+                                    href={`https://www.google.com/maps/search/?api=1&query=${jobPosting.hotel.latitude},${jobPosting.hotel.longitude}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.375rem',
+                                        marginTop: '0.5rem',
+                                        padding: '0.375rem 0.75rem',
+                                        background: 'rgba(239,191,4,0.1)',
+                                        border: '1px solid var(--accent)',
+                                        borderRadius: 'var(--radius-full)',
+                                        color: 'var(--accent)',
+                                        fontSize: '0.75rem',
+                                        fontWeight: 600,
+                                        textDecoration: 'none'
+                                    }}
+                                >
+                                    <MapPin size={12} /> View on Google Maps
+                                </a>
+                            )}
                         </div>
                     </div>
 
@@ -208,8 +227,8 @@ export default async function ShiftDetailPage({
                 ) : existingApplication ? (
                     <div style={{ textAlign: 'center', padding: '1rem' }}>
                         <span className={`badge ${existingApplication.status === 'PENDING' ? 'badge-pending' :
-                                existingApplication.status === 'ACCEPTED' ? 'badge-verified' :
-                                    'badge-declined'
+                            existingApplication.status === 'ACCEPTED' ? 'badge-verified' :
+                                'badge-declined'
                             }`} style={{ fontSize: '1rem', padding: '0.75rem 1.5rem' }}>
                             {existingApplication.status === 'PENDING' ? 'Pending Approval' :
                                 existingApplication.status === 'ACCEPTED' ? '✓ Accepted!' :

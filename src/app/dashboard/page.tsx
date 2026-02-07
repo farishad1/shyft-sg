@@ -5,12 +5,11 @@ import Link from 'next/link';
 import {
     Clock,
     CheckCircle2,
-    AlertTriangle,
-    GraduationCap,
     DollarSign,
     Calendar,
-    Award
+    Search
 } from 'lucide-react';
+import { TierStatusCard } from '@/components/TierStatusCard';
 
 export default async function WorkerDashboardPage() {
     const session = await auth();
@@ -21,6 +20,12 @@ export default async function WorkerDashboardPage() {
 
     const workerProfile = await prisma.workerProfile.findUnique({
         where: { userId: session.user.id },
+        include: {
+            shifts: {
+                where: { isCompleted: true },
+                select: { estimatedPay: true }
+            }
+        }
     });
 
     if (!workerProfile) {
@@ -32,9 +37,9 @@ export default async function WorkerDashboardPage() {
         );
     }
 
-    const { verificationStatus, trainingProgress } = workerProfile;
+    const { verificationStatus } = workerProfile;
     const isVerified = verificationStatus === 'VERIFIED';
-    const isTrainingComplete = trainingProgress >= 100;
+    const totalEarnings = workerProfile.shifts.reduce((sum, s) => sum + s.estimatedPay, 0);
 
     // STATE A: Pending Verification
     if (verificationStatus === 'PENDING') {
@@ -66,7 +71,7 @@ export default async function WorkerDashboardPage() {
                                 Verification In Progress
                             </h2>
                             <p style={{ color: '#ccc', marginBottom: '1rem' }}>
-                                Your profile is currently under review by our team. This process usually takes 24-48 hours.
+                                Your profile is currently under review. This usually takes 24-48 hours.
                             </p>
                             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                                 <span className="badge badge-pending">Identity Pending</span>
@@ -80,23 +85,24 @@ export default async function WorkerDashboardPage() {
                     <h3 style={{ marginBottom: '1rem', color: '#888' }}>While You Wait...</h3>
                     <ul style={{ listStyle: 'disc', paddingLeft: '1.5rem', color: '#888', lineHeight: 1.8 }}>
                         <li>Make sure your contact information is up to date</li>
-                        <li>Review our <Link href="/faq" style={{ color: 'var(--accent)' }}>FAQ</Link> to learn more about Shyft Sg</li>
-                        <li>Prepare for the Shyft Academy training once verified</li>
+                        <li>Review our <Link href="/#faq" style={{ color: 'var(--accent)' }}>FAQ</Link> to learn more about Shyft Sg</li>
+                        <li>Once approved, you can start booking shifts immediately!</li>
                     </ul>
                 </div>
             </div>
         );
     }
 
-    // STATE B: Verified but Training Incomplete
-    if (isVerified && !isTrainingComplete) {
-        return (
-            <div>
-                <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '2rem' }}>
-                    Welcome, {workerProfile.firstName}!
-                </h1>
-
-                {/* Verified Badge */}
+    // STATE B: Ready to Work (Verified)
+    return (
+        <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
+                <div>
+                    <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+                        Welcome back, {workerProfile.firstName}!
+                    </h1>
+                    <p style={{ color: '#888' }}>You&apos;re all set to find shifts.</p>
+                </div>
                 <div style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -104,91 +110,35 @@ export default async function WorkerDashboardPage() {
                     padding: '0.5rem 1rem',
                     background: 'rgba(34,197,94,0.1)',
                     border: '1px solid #22c55e',
-                    borderRadius: 'var(--radius-md)',
-                    marginBottom: '2rem'
+                    borderRadius: 'var(--radius-md)'
                 }}>
                     <CheckCircle2 size={18} color="#22c55e" />
-                    <span style={{ color: '#22c55e', fontWeight: 500 }}>Identity Verified</span>
-                </div>
-
-                {/* Training Call-to-Action */}
-                <div className="card" style={{
-                    background: 'linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(0,0,0,0) 100%)',
-                    border: '2px solid var(--accent)',
-                    padding: '2rem'
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                        <div style={{
-                            width: '4rem',
-                            height: '4rem',
-                            borderRadius: '50%',
-                            background: 'var(--accent)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}>
-                            <GraduationCap size={32} color="#000" />
-                        </div>
-                        <div style={{ flex: 1 }}>
-                            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                                Unlock Your First Shift
-                            </h2>
-                            <p style={{ color: '#ccc', marginBottom: '1rem' }}>
-                                Complete the Shyft Academy training to start finding shifts at premium hotels.
-                            </p>
-                            <Link href="/academy" className="btn btn-primary btn-lg">
-                                Start Shyft Academy →
-                            </Link>
-                        </div>
-                    </div>
-
-                    <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(0,0,0,0.3)', borderRadius: 'var(--radius-md)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ color: '#888' }}>Training Progress</span>
-                            <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{trainingProgress}%</span>
-                        </div>
-                        <div style={{ height: '8px', background: '#333', borderRadius: '4px', marginTop: '0.5rem', overflow: 'hidden' }}>
-                            <div style={{ width: `${trainingProgress}%`, height: '100%', background: 'var(--accent)', borderRadius: '4px' }} />
-                        </div>
-                    </div>
-                </div>
-
-                <div style={{ marginTop: '2rem', padding: '1rem', background: '#111', borderRadius: 'var(--radius-md)', border: '1px solid #333' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <AlertTriangle size={18} color="#888" />
-                        <span style={{ color: '#888', fontSize: '0.875rem' }}>
-                            Complete training to unlock the "Find Shifts" feature
-                        </span>
-                    </div>
+                    <span style={{ color: '#22c55e', fontWeight: 500 }}>Verified</span>
                 </div>
             </div>
-        );
-    }
 
-    // STATE C: Ready to Work (Verified + Training Complete)
-    return (
-        <div>
-            <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                Welcome back, {workerProfile.firstName}!
-            </h1>
-            <p style={{ color: '#888', marginBottom: '2rem' }}>You're all set to find shifts.</p>
+            {/* Tier Status Card with Progress Bar */}
+            <TierStatusCard
+                tier={workerProfile.tier}
+                hoursWorked={workerProfile.totalHoursWorked}
+            />
 
             {/* Stats Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem', marginTop: '1.5rem' }}>
                 <StatCard
-                    label="Estimated Earnings"
-                    value="$0.00"
+                    label="Total Earnings"
+                    value={`$${totalEarnings.toFixed(2)}`}
                     icon={<DollarSign size={20} color="var(--accent)" />}
                 />
                 <StatCard
                     label="Completed Shifts"
-                    value="0"
+                    value={workerProfile.shifts.length.toString()}
                     icon={<Calendar size={20} color="var(--accent)" />}
                 />
                 <StatCard
-                    label="Current Tier"
-                    value={workerProfile.tier}
-                    icon={<Award size={20} color="var(--accent)" />}
+                    label="Hours Worked"
+                    value={`${workerProfile.totalHoursWorked.toFixed(1)}h`}
+                    icon={<Clock size={20} color="var(--accent)" />}
                 />
             </div>
 
@@ -200,17 +150,17 @@ export default async function WorkerDashboardPage() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '1rem',
-                    border: '1px solid var(--accent)',
+                    border: '2px solid var(--accent)',
                     transition: 'transform 0.2s'
                 }}>
-                    <Calendar size={24} color="var(--accent)" />
+                    <Search size={24} color="var(--accent)" />
                     <div>
                         <div style={{ fontWeight: 600, color: '#fff' }}>Find Shifts</div>
                         <div style={{ fontSize: '0.875rem', color: '#888' }}>Browse available opportunities</div>
                     </div>
                 </Link>
 
-                <Link href="/dashboard/profile" className="card" style={{
+                <Link href="/dashboard/schedule" className="card" style={{
                     padding: '1.5rem',
                     textDecoration: 'none',
                     display: 'flex',
@@ -218,10 +168,25 @@ export default async function WorkerDashboardPage() {
                     gap: '1rem',
                     transition: 'transform 0.2s'
                 }}>
-                    <Award size={24} color="var(--accent)" />
+                    <Calendar size={24} color="var(--accent)" />
                     <div>
-                        <div style={{ fontWeight: 600, color: '#fff' }}>My Profile</div>
-                        <div style={{ fontSize: '0.875rem', color: '#888' }}>View tier and ratings</div>
+                        <div style={{ fontWeight: 600, color: '#fff' }}>My Schedule</div>
+                        <div style={{ fontSize: '0.875rem', color: '#888' }}>View upcoming shifts</div>
+                    </div>
+                </Link>
+
+                <Link href="/dashboard/history" className="card" style={{
+                    padding: '1.5rem',
+                    textDecoration: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    transition: 'transform 0.2s'
+                }}>
+                    <DollarSign size={24} color="var(--accent)" />
+                    <div>
+                        <div style={{ fontWeight: 600, color: '#fff' }}>Earnings</div>
+                        <div style={{ fontSize: '0.875rem', color: '#888' }}>View shift history & pay</div>
                     </div>
                 </Link>
             </div>
@@ -231,13 +196,21 @@ export default async function WorkerDashboardPage() {
                 <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid #333' }}>
                     <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Recent Shifts</h2>
                 </div>
-                <div style={{ padding: '3rem', textAlign: 'center', color: '#888' }}>
-                    <Calendar size={48} style={{ opacity: 0.3, marginBottom: '1rem' }} />
-                    <p>No shifts yet. Start browsing to find your first opportunity!</p>
-                    <Link href="/dashboard/shifts" className="btn btn-primary" style={{ marginTop: '1rem' }}>
-                        Browse Shifts
-                    </Link>
-                </div>
+                {workerProfile.shifts.length === 0 ? (
+                    <div style={{ padding: '3rem', textAlign: 'center', color: '#888' }}>
+                        <Calendar size={48} style={{ opacity: 0.3, marginBottom: '1rem' }} />
+                        <p>No shifts yet. Start browsing to find your first opportunity!</p>
+                        <Link href="/dashboard/shifts" className="btn btn-primary" style={{ marginTop: '1rem' }}>
+                            Browse Shifts
+                        </Link>
+                    </div>
+                ) : (
+                    <div style={{ padding: '1rem', color: '#888', textAlign: 'center' }}>
+                        <Link href="/dashboard/history" className="btn btn-ghost">
+                            View All Shifts →
+                        </Link>
+                    </div>
+                )}
             </div>
         </div>
     );

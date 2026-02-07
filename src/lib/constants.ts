@@ -96,10 +96,15 @@ export const TRAINING_CATEGORIES = {
 // ============================================
 
 export const WORK_PASS_LABELS = {
-    CITIZEN: 'Singapore Citizen',
-    PERMANENT_RESIDENT: 'Permanent Resident',
-    STUDENT_PASS: 'Student Pass',
-    LTVP: 'Long Term Visit Pass',
+    CITIZEN_PR: 'Singapore Citizen / PR',
+    EMPLOYMENT_PASS: 'Employment Pass',
+    S_PASS: 'S Pass',
+    WORK_PERMIT: 'Work Permit',
+    DEPENDENT_PASS_LTVP: 'Dependent Pass / Long Term Visitor Pass',
+    STUDENT_PASS: 'Student Pass (Foreigner)',
+    TEMPORARY_EMPLOYMENT_PASS: 'Temporary Employment Pass',
+    PROFESSIONAL_VISIT_PASS: 'Professional Visit Pass',
+    OTHER: 'Other',
 } as const;
 
 // ============================================

@@ -36,21 +36,19 @@ export async function POST(request: NextRequest) {
                 console.log('[ContactAPI] Database query failed:', dbError);
             }
 
-            // Save the contact submission
+            // Save the contact submission to ContactRequest table
             try {
-                await prisma.contactSubmission.create({
+                await prisma.contactRequest.create({
                     data: {
                         name,
                         email,
                         phone: phone || null,
                         subject,
                         message,
-                        isFromRegisteredUser,
-                        registeredUserId: registeredUser?.id || null,
                     },
                 });
             } catch (dbError) {
-                console.log('[ContactAPI] Failed to save contact submission:', dbError);
+                console.log('[ContactAPI] Failed to save contact request:', dbError);
             }
         } else {
             // No database connection - log for development

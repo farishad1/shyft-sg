@@ -4,11 +4,11 @@ import Link from 'next/link';
 import {
     Home,
     Calendar,
-    GraduationCap,
     MessageSquare,
     User,
     DollarSign,
-    LogOut
+    LogOut,
+    ClipboardList
 } from 'lucide-react';
 
 export default async function DashboardLayout({
@@ -65,9 +65,9 @@ export default async function DashboardLayout({
                 <nav style={{ flex: 1, padding: '1.5rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <DashboardLink href="/dashboard" icon={<Home size={18} />} label="Home" />
                     <DashboardLink href="/dashboard/shifts" icon={<Calendar size={18} />} label="Find Shifts" />
-                    <DashboardLink href="/academy" icon={<GraduationCap size={18} />} label="Academy" />
-                    <DashboardLink href="/dashboard/messages" icon={<MessageSquare size={18} />} label="Messages" />
-                    <DashboardLink href="/dashboard/earnings" icon={<DollarSign size={18} />} label="Earnings" />
+                    <DashboardLink href="/dashboard/schedule" icon={<ClipboardList size={18} />} label="My Schedule" />
+                    <DashboardLink href="/messages" icon={<MessageSquare size={18} />} label="Messages" />
+                    <DashboardLink href="/dashboard/history" icon={<DollarSign size={18} />} label="Earnings" />
                     <DashboardLink href="/dashboard/profile" icon={<User size={18} />} label="Profile" />
                 </nav>
 

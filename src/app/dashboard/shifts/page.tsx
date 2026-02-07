@@ -1,18 +1,10 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
-import Link from 'next/link';
 import { differenceInYears } from 'date-fns';
-import {
-    MapPin,
-    Clock,
-    DollarSign,
-    Calendar,
-    Building2,
-    AlertTriangle,
-    Filter
-} from 'lucide-react';
+import { AlertTriangle, Filter } from 'lucide-react';
 import { BUSINESS_RULES } from '@/lib/constants';
+import { ShiftsClientWrapper } from './ShiftsClientWrapper';
 
 export default async function ShiftsPage() {
     const session = await auth();
@@ -24,31 +16,16 @@ export default async function ShiftsPage() {
         where: { userId: session.user.id },
     });
 
-    // Must be verified AND training complete to access shifts
+    // Must be verified to access shifts
     if (!workerProfile || workerProfile.verificationStatus !== 'VERIFIED') {
         redirect('/dashboard');
-    }
-
-    if (workerProfile.trainingProgress < 100) {
-        return (
-            <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
-                <AlertTriangle size={48} color="#eab308" style={{ marginBottom: '1rem' }} />
-                <h2 style={{ marginBottom: '0.5rem' }}>Training Required</h2>
-                <p style={{ color: '#888', marginBottom: '1.5rem' }}>
-                    Complete the Shyft Academy to unlock shift browsing.
-                </p>
-                <Link href="/academy" className="btn btn-primary">
-                    Go to Academy
-                </Link>
-            </div>
-        );
     }
 
     // Calculate worker age for Minor Protection Filter
     const workerAge = differenceInYears(new Date(), new Date(workerProfile.dateOfBirth));
     const isMinor = workerAge < BUSINESS_RULES.MINOR_AGE_THRESHOLD; // Under 16
 
-    // Fetch available job postings (not Shift - that's for confirmed assignments)
+    // Fetch available job postings with hotel coordinates
     let jobPostings = await prisma.jobPosting.findMany({
         where: {
             isActive: true,
@@ -56,7 +33,15 @@ export default async function ShiftsPage() {
             shiftDate: { gte: new Date() }, // Only future shifts
         },
         include: {
-            hotel: true, // HotelProfile relation
+            hotel: {
+                select: {
+                    id: true,
+                    hotelName: true,
+                    location: true,
+                    latitude: true,
+                    longitude: true,
+                }
+            },
         },
         orderBy: { shiftDate: 'asc' },
         take: 20,
@@ -78,6 +63,25 @@ export default async function ShiftsPage() {
             return !isLateNight && !isTooLong;
         });
     }
+
+    // Transform for client component (serialize dates)
+    const serializedJobs = jobPostings.map(job => ({
+        id: job.id,
+        title: job.title,
+        startTime: job.startTime,
+        endTime: job.endTime,
+        totalHours: job.totalHours,
+        hourlyPay: job.hourlyPay,
+        location: job.location,
+        slotsOpen: job.slotsOpen,
+        hotel: {
+            id: job.hotel.id,
+            hotelName: job.hotel.hotelName,
+            location: job.hotel.location,
+            latitude: job.hotel.latitude,
+            longitude: job.hotel.longitude,
+        }
+    }));
 
     return (
         <div>
@@ -115,77 +119,8 @@ export default async function ShiftsPage() {
                 <button className="btn btn-ghost btn-sm">Near Me</button>
             </div>
 
-            {/* Job Postings List */}
-            {jobPostings.length === 0 ? (
-                <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
-                    <Calendar size={48} style={{ opacity: 0.3, marginBottom: '1rem' }} />
-                    <h2 style={{ marginBottom: '0.5rem' }}>No Shifts Available</h2>
-                    <p style={{ color: '#888' }}>
-                        {isMinor
-                            ? "No shifts match your age restrictions. Check back soon!"
-                            : "Check back soon for new opportunities."}
-                    </p>
-                </div>
-            ) : (
-                <div style={{ display: 'grid', gap: '1rem' }}>
-                    {jobPostings.map((job) => {
-                        const startDate = new Date(job.startTime);
-                        const endDate = new Date(job.endTime);
-
-                        return (
-                            <div key={job.id} className="card" style={{ padding: '1.5rem' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                                            <div style={{
-                                                width: '2.5rem',
-                                                height: '2.5rem',
-                                                borderRadius: 'var(--radius-md)',
-                                                background: '#222',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center'
-                                            }}>
-                                                <Building2 size={18} color="var(--accent)" />
-                                            </div>
-                                            <div>
-                                                <h3 style={{ fontWeight: 600, fontSize: '1.125rem' }}>{job.title}</h3>
-                                                <p style={{ fontSize: '0.875rem', color: '#888' }}>{job.hotel.hotelName}</p>
-                                            </div>
-                                        </div>
-
-                                        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', fontSize: '0.875rem', color: '#ccc' }}>
-                                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                <Calendar size={14} color="#888" />
-                                                {startDate.toLocaleDateString('en-SG', { weekday: 'short', month: 'short', day: 'numeric' })}
-                                            </span>
-                                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                <Clock size={14} color="#888" />
-                                                {startDate.toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit' })} - {endDate.toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit' })}
-                                                <span style={{ color: '#888' }}>({job.totalHours.toFixed(1)}h)</span>
-                                            </span>
-                                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                <MapPin size={14} color="#888" />
-                                                {job.location}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div style={{ textAlign: 'right' }}>
-                                        <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent)' }}>
-                                            ${job.hourlyPay.toFixed(2)}
-                                            <span style={{ fontSize: '0.875rem', fontWeight: 400, color: '#888' }}>/hr</span>
-                                        </div>
-                                        <Link href={`/dashboard/shifts/${job.id}`} className="btn btn-primary btn-sm" style={{ marginTop: '0.5rem' }}>
-                                            View Details
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
+            {/* Map + Shifts List (Client Component) */}
+            <ShiftsClientWrapper jobPostings={serializedJobs} />
         </div>
     );
 }

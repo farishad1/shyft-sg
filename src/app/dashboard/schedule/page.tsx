@@ -9,8 +9,8 @@ import {
     CheckCircle2,
     HelpCircle,
     History,
-    DollarSign
 } from 'lucide-react';
+import { CancelShiftButton } from '@/components/CancelShiftButton';
 
 export default async function SchedulePage() {
     const session = await auth();
@@ -112,6 +112,7 @@ export default async function SchedulePage() {
                             {upcomingShifts.map((shift) => (
                                 <ShiftCard
                                     key={shift.id}
+                                    shiftId={shift.id}
                                     type="upcoming"
                                     title={shift.jobPosting.title}
                                     hotelName={shift.hotel.hotelName}
@@ -211,6 +212,7 @@ export default async function SchedulePage() {
 
 interface ShiftCardProps {
     type: 'upcoming' | 'pending' | 'history';
+    shiftId?: string;
     title: string;
     hotelName: string;
     date: Date;
@@ -223,7 +225,7 @@ interface ShiftCardProps {
     isPaid?: boolean;
 }
 
-function ShiftCard({ type, title, hotelName, date, startTime, endTime, location, earnings, note, linkTo, isPaid }: ShiftCardProps) {
+function ShiftCard({ type, shiftId, title, hotelName, date, startTime, endTime, location, earnings, note, linkTo, isPaid }: ShiftCardProps) {
     const borderColor = type === 'upcoming' ? '#22c55e' : type === 'pending' ? '#eab308' : '#333';
 
     const content = (
@@ -236,7 +238,7 @@ function ShiftCard({ type, title, hotelName, date, startTime, endTime, location,
             }}
         >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div>
+                <div style={{ flex: 1 }}>
                     <h3 style={{ fontWeight: 600, marginBottom: '0.25rem' }}>{title}</h3>
                     <div style={{ fontSize: '0.875rem', color: '#888', marginBottom: '0.75rem' }}>{hotelName}</div>
 
@@ -262,24 +264,33 @@ function ShiftCard({ type, title, hotelName, date, startTime, endTime, location,
                     )}
                 </div>
 
-                {earnings !== undefined && (
-                    <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '1.25rem', fontWeight: 700, color: type === 'history' && isPaid ? '#22c55e' : 'var(--accent)' }}>
-                            ${earnings.toFixed(2)}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
+                    {earnings !== undefined && (
+                        <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: '1.25rem', fontWeight: 700, color: type === 'history' && isPaid ? '#22c55e' : 'var(--accent)' }}>
+                                ${earnings.toFixed(2)}
+                            </div>
+                            {type === 'history' && (
+                                <span style={{ fontSize: '0.75rem', color: isPaid ? '#22c55e' : '#888' }}>
+                                    {isPaid ? '✓ Paid' : 'Pending Payment'}
+                                </span>
+                            )}
                         </div>
-                        {type === 'history' && (
-                            <span style={{ fontSize: '0.75rem', color: isPaid ? '#22c55e' : '#888' }}>
-                                {isPaid ? '✓ Paid' : 'Pending Payment'}
-                            </span>
-                        )}
-                    </div>
-                )}
+                    )}
 
-                {type === 'pending' && (
-                    <div style={{ textAlign: 'right' }}>
+                    {type === 'pending' && (
                         <span className="badge badge-pending">Awaiting Review</span>
-                    </div>
-                )}
+                    )}
+
+                    {/* Cancel Button for Upcoming Shifts */}
+                    {type === 'upcoming' && shiftId && (
+                        <CancelShiftButton
+                            shiftId={shiftId}
+                            shiftStartTime={startTime}
+                            shiftTitle={title}
+                        />
+                    )}
+                </div>
             </div>
         </div>
     );

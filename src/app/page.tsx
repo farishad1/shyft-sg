@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Navbar, LiveTicker, FAQ, ContactForm } from '@/components';
-import { UserPlus, GraduationCap, Search } from 'lucide-react';
+import { UserPlus, Search } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -36,10 +36,10 @@ export default function HomePage() {
             How <span className="text-gold">Shyft</span> Works
           </h2>
           <p className="text-muted" style={{ textAlign: 'center', marginBottom: '3rem', maxWidth: '600px', margin: '0 auto 3rem' }}>
-            Get started in three simple steps
+            Get started in two simple steps
           </p>
 
-          <div className="grid-3">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', maxWidth: '800px', margin: '0 auto' }}>
             {/* Step 1 */}
             <div className="card step-card">
               <div className="step-number">
@@ -47,29 +47,17 @@ export default function HomePage() {
               </div>
               <h3 className="step-title">Sign Up & Verify</h3>
               <p className="step-description">
-                Create your account and complete our quick verification process.
-                We&apos;ll confirm your identity and right to work in Singapore.
+                Create your account and upload your ID/work pass.
+                Once approved, you&apos;re ready to start earning.
               </p>
             </div>
 
             {/* Step 2 */}
             <div className="card step-card">
               <div className="step-number">
-                <GraduationCap size={24} />
-              </div>
-              <h3 className="step-title">Complete Training</h3>
-              <p className="step-description">
-                Finish the Shyft Academy modules covering boutique hotels,
-                capsule hotels, and serviced apartments.
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="card step-card">
-              <div className="step-number">
                 <Search size={24} />
               </div>
-              <h3 className="step-title">Find Shifts</h3>
+              <h3 className="step-title">Book Shifts</h3>
               <p className="step-description">
                 Browse available shifts, apply instantly, and start earning.
                 Track your hours, ratings, and tier progress.

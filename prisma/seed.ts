@@ -49,8 +49,9 @@ async function main() {
         console.log('ℹ️ Admin user already exists. Skipping creation.');
     }
 
-    // Seeding Test Data (Optional - useful for dev)
-    // Add some test storage if needed
+    // NOTE: No demo hotels are seeded.
+    // The map will be empty by default - only real hotels that register will appear.
+    // Hotels can enter their address during registration, which will be geocoded.
 
     console.log('🏁 Seed completed.');
 }

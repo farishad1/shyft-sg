@@ -36,14 +36,14 @@ export default async function AdminFinancialsPage() {
             {/* KPI Cards Row 1 */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
                 <KPICard
-                    title="Total GMV"
+                    title="Total Revenue"
                     value={`$${stats.totalGMV.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-                    subtitle="Gross Merchandise Value"
+                    subtitle="Platform earnings to date"
                     icon={<DollarSign size={24} />}
                     color="#22c55e"
                 />
                 <KPICard
-                    title="Potential Revenue"
+                    title="Total Sales"
                     value={`$${stats.potentialRevenue.toLocaleString()}/mo`}
                     subtitle={`${stats.activeHotels} active hotels × $100`}
                     icon={<TrendingUp size={24} />}
