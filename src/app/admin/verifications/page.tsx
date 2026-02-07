@@ -8,9 +8,10 @@ import { BUSINESS_RULES } from '@/lib/constants';
 export default async function VerificationsPage({
     searchParams,
 }: {
-    searchParams: { tab?: string };
+    searchParams: Promise<{ tab?: string }>;
 }) {
-    const tab = searchParams.tab || 'workers'; // 'workers' | 'hotels'
+    const { tab: tabParam } = await searchParams;
+    const tab = tabParam || 'workers'; // 'workers' | 'hotels'
 
     // Fetch data based on tab
     // Note: We fetch ALL pending for now. Pagination in future.
