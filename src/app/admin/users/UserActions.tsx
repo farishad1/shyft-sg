@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { banUser, unbanUser, unverifyUser, deleteUser } from '../actions';
-import { MoreHorizontal, Eye, Ban, ShieldX, RotateCcw, X, Trash2 } from 'lucide-react';
+import { banUser, unbanUser, unverifyUser, deleteUser, removeUser } from '../actions';
+import { MoreHorizontal, Eye, Ban, ShieldX, RotateCcw, X, Trash2, UserX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface WorkerDetails {
@@ -26,7 +26,9 @@ export function UserActions({ userId, isActive, isVerified, worker }: UserAction
     const [showProfile, setShowProfile] = useState(false);
     const [showBanModal, setShowBanModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showRemoveModal, setShowRemoveModal] = useState(false);
     const [banReason, setBanReason] = useState('');
+    const [removeReason, setRemoveReason] = useState('');
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
 
@@ -61,6 +63,18 @@ export function UserActions({ userId, isActive, isVerified, worker }: UserAction
             await deleteUser(userId);
             setShowDeleteModal(false);
             router.refresh();
+        });
+    };
+
+    const handleRemove = () => {
+        if (!removeReason.trim()) return;
+        startTransition(async () => {
+            const result = await removeUser(userId, removeReason.trim());
+            if (result.success) {
+                setShowRemoveModal(false);
+                setRemoveReason('');
+                router.refresh();
+            }
         });
     };
 
@@ -173,6 +187,24 @@ export function UserActions({ userId, isActive, isVerified, worker }: UserAction
                             <div style={{ height: '1px', background: '#333', margin: '0.25rem 0' }} />
 
                             <button
+                                onClick={() => { setShowRemoveModal(true); setShowDropdown(false); }}
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem 1rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    background: 'none',
+                                    border: 'none',
+                                    color: '#f97316',
+                                    cursor: 'pointer',
+                                    textAlign: 'left'
+                                }}
+                            >
+                                <UserX size={16} /> Remove User
+                            </button>
+
+                            <button
                                 onClick={() => { setShowDeleteModal(true); setShowDropdown(false); }}
                                 style={{
                                     width: '100%',
@@ -187,7 +219,7 @@ export function UserActions({ userId, isActive, isVerified, worker }: UserAction
                                     textAlign: 'left'
                                 }}
                             >
-                                <Trash2 size={16} /> Delete User
+                                <Trash2 size={16} /> Delete Permanently
                             </button>
                         </div>
                     </>
@@ -347,6 +379,68 @@ export function UserActions({ userId, isActive, isVerified, worker }: UserAction
                                 style={{ flex: 1, background: '#dc2626', color: '#fff' }}
                             >
                                 {isPending ? 'Deleting...' : 'Delete Forever'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Remove Modal */}
+            {showRemoveModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0,0,0,0.8)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 100
+                }}>
+                    <div className="card" style={{ width: '100%', maxWidth: '450px', padding: '1.5rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                            <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#f97316' }}>Remove User</h2>
+                            <button onClick={() => { setShowRemoveModal(false); setRemoveReason(''); }} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer' }}>
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <p style={{ marginBottom: '1rem', color: '#888' }}>
+                            Are you sure you want to remove <strong style={{ color: '#fff' }}>{worker.name}</strong>?
+                        </p>
+                        <p style={{ marginBottom: '1rem', color: '#888', fontSize: '0.875rem' }}>
+                            The user will be unable to log in and will see the reason you provide below.
+                        </p>
+
+                        <label style={{ display: 'block', marginBottom: '0.5rem', color: '#888', fontSize: '0.875rem' }}>
+                            Reason for removal: <span style={{ color: '#ef4444' }}>*</span>
+                        </label>
+                        <textarea
+                            value={removeReason}
+                            onChange={(e) => setRemoveReason(e.target.value)}
+                            placeholder="Enter reason for removal (required)"
+                            className="input"
+                            rows={3}
+                            style={{ marginBottom: '1rem', width: '100%' }}
+                        />
+
+                        <div style={{ display: 'flex', gap: '0.75rem' }}>
+                            <button
+                                onClick={() => { setShowRemoveModal(false); setRemoveReason(''); }}
+                                className="btn btn-ghost"
+                                style={{ flex: 1 }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleRemove}
+                                disabled={isPending || !removeReason.trim()}
+                                className="btn"
+                                style={{ flex: 1, background: '#f97316', color: '#fff', opacity: !removeReason.trim() ? 0.5 : 1 }}
+                            >
+                                {isPending ? 'Removing...' : 'Remove User'}
                             </button>
                         </div>
                     </div>

@@ -47,6 +47,11 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
                     const user = await prisma.user.findUnique({ where: { email } });
                     if (!user) return null;
 
+                    // Check if user has been removed by admin
+                    if (user.isRemoved) {
+                        throw new Error(`REMOVED:${user.removalReason || 'Your account has been removed by an administrator.'}`);
+                    }
+
                     const passwordsMatch = await verifyPassword(password, user.passwordHash);
 
                     if (passwordsMatch) {

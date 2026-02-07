@@ -25,15 +25,18 @@ export default async function AdminUsersPage({
 
     const searchQuery = searchParams.q || '';
 
-    // Fetch all workers with optional search
+    // Fetch all workers with optional search (excluding removed users)
     const workers = await prisma.workerProfile.findMany({
-        where: searchQuery ? {
-            OR: [
-                { firstName: { contains: searchQuery, mode: 'insensitive' } },
-                { lastName: { contains: searchQuery, mode: 'insensitive' } },
-                { user: { email: { contains: searchQuery, mode: 'insensitive' } } },
-            ],
-        } : {},
+        where: {
+            user: { isRemoved: false },
+            ...(searchQuery ? {
+                OR: [
+                    { firstName: { contains: searchQuery, mode: 'insensitive' } },
+                    { lastName: { contains: searchQuery, mode: 'insensitive' } },
+                    { user: { email: { contains: searchQuery, mode: 'insensitive' } } },
+                ],
+            } : {}),
+        },
         include: {
             user: true,
             shifts: {

@@ -30,20 +30,23 @@ export default async function AdminHotelsPage() {
         redirect('/');
     }
 
-    // Fetch all hotels with their profiles
-    const hotels = await prisma.hotelProfile.findMany({
+    // Fetch all hotels with their profiles (excluding removed users)
+    const allHotels = await prisma.hotelProfile.findMany({
         include: {
             user: {
                 select: {
                     id: true,
                     email: true,
-                    createdAt: true
+                    createdAt: true,
+                    isRemoved: true
                 }
             }
         },
         orderBy: { createdAt: 'desc' }
     });
 
+    // Filter out removed users
+    const hotels = allHotels.filter(h => !h.user.isRemoved);
     const activeHotels = hotels.filter(h => !h.isBanned);
     const bannedHotels = hotels.filter(h => h.isBanned);
 

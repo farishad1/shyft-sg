@@ -70,6 +70,10 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  // Removal status (for admin-removed users)
+  isRemoved       Boolean   @default(false)
+  removalReason   String?
+
   // Relations (only one will be populated based on role)
   workerProfile WorkerProfile?
   hotelProfile  HotelProfile?
@@ -85,6 +89,7 @@ model User {
 
   @@index([email])
   @@index([role])
+  @@index([isRemoved])
 }
 
 // ============================================

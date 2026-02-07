@@ -231,6 +231,44 @@ export async function deleteUser(userId: string) {
 }
 
 /**
+ * Remove a user (soft delete) with a reason - user cannot log in
+ */
+export async function removeUser(userId: string, reason: string) {
+    await verifyAdmin();
+
+    if (!reason || reason.trim().length === 0) {
+        return { success: false, error: 'Removal reason is required' };
+    }
+
+    const user = await prisma!.user.findUnique({
+        where: { id: userId },
+    });
+
+    if (!user) {
+        return { success: false, error: 'User not found' };
+    }
+
+    if (user.isRemoved) {
+        return { success: false, error: 'User is already removed' };
+    }
+
+    await prisma!.user.update({
+        where: { id: userId },
+        data: {
+            isRemoved: true,
+            removalReason: reason.trim(),
+        },
+    });
+
+    revalidatePath('/admin/users');
+    revalidatePath('/admin/hotels');
+    revalidatePath('/admin/verifications');
+    revalidatePath('/admin/establishments');
+
+    return { success: true };
+}
+
+/**
  * Toggle hotel subscription status
  */
 export async function toggleSubscription(hotelProfileId: string) {
