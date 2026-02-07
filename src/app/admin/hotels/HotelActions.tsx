@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect, useCallback } from 'react';
 import { banUser, unbanUser, unverifyUser, toggleSubscription, deleteUser, removeUser } from '../actions';
 import { MoreHorizontal, Eye, Ban, ShieldX, RotateCcw, X, ToggleLeft, ToggleRight, Trash2, UserX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -85,6 +85,26 @@ export function HotelActions({ userId, hotelProfileId, isActive, isVerified, sub
             }
         });
     };
+
+    // Close profile modal on Escape key
+    const closeProfile = useCallback(() => setShowProfile(false), []);
+
+    useEffect(() => {
+        if (!showProfile) return;
+
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') closeProfile();
+        };
+
+        // Lock body scroll
+        document.body.style.overflow = 'hidden';
+        document.addEventListener('keydown', handleEscape);
+
+        return () => {
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', handleEscape);
+        };
+    }, [showProfile, closeProfile]);
 
     return (
         <>
@@ -254,48 +274,109 @@ export function HotelActions({ userId, hotelProfileId, isActive, isVerified, sub
                 )}
             </div>
 
-            {/* Profile Modal */}
+            {/* Profile Modal - Fixed Overlay */}
             {showProfile && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'rgba(0,0,0,0.8)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 100
-                }}>
-                    <div className="card" style={{ width: '100%', maxWidth: '400px', padding: '1.5rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                            <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Hotel Details</h2>
-                            <button onClick={() => setShowProfile(false)} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer' }}>
-                                <X size={20} />
-                            </button>
-                        </div>
+                <>
+                    {/* Backdrop - click to close */}
+                    <div
+                        onClick={closeProfile}
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background: 'rgba(0, 0, 0, 0.7)',
+                            backdropFilter: 'blur(4px)',
+                            zIndex: 9998,
+                        }}
+                    />
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            <div>
-                                <label style={{ fontSize: '0.75rem', color: '#888', display: 'block' }}>Hotel Name</label>
-                                <span style={{ fontWeight: 500 }}>{hotel.name}</span>
+                    {/* Modal Card - Centered */}
+                    <div
+                        style={{
+                            position: 'fixed',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            zIndex: 9999,
+                            width: '100%',
+                            maxWidth: '450px',
+                            padding: '0 1rem',
+                        }}
+                    >
+                        <div
+                            className="card"
+                            style={{
+                                padding: '2rem',
+                                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                        >
+                            {/* Header */}
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: '1.5rem',
+                                paddingBottom: '1rem',
+                                borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+                            }}>
+                                <h2 style={{ fontSize: '1.5rem', fontWeight: 600, color: '#fff' }}>Hotel Details</h2>
+                                <button
+                                    onClick={closeProfile}
+                                    style={{
+                                        background: 'rgba(255, 255, 255, 0.1)',
+                                        border: 'none',
+                                        color: '#888',
+                                        cursor: 'pointer',
+                                        padding: '0.5rem',
+                                        borderRadius: '0.5rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        transition: 'all 0.2s'
+                                    }}
+                                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+                                    onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
+                                >
+                                    <X size={20} />
+                                </button>
                             </div>
-                            <div>
-                                <label style={{ fontSize: '0.75rem', color: '#888', display: 'block' }}>Email</label>
-                                <span>{hotel.email}</span>
+
+                            {/* Profile Content Grid */}
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+                                <div style={{ gridColumn: 'span 2' }}>
+                                    <label style={{ fontSize: '0.75rem', color: '#888', display: 'block', marginBottom: '0.25rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Hotel Name</label>
+                                    <span style={{ fontWeight: 600, fontSize: '1.125rem', color: '#fff' }}>{hotel.name}</span>
+                                </div>
+                                <div style={{ gridColumn: 'span 2' }}>
+                                    <label style={{ fontSize: '0.75rem', color: '#888', display: 'block', marginBottom: '0.25rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Email Address</label>
+                                    <span style={{ color: '#a3a3a3' }}>{hotel.email}</span>
+                                </div>
+                                <div>
+                                    <label style={{ fontSize: '0.75rem', color: '#888', display: 'block', marginBottom: '0.25rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>UEN</label>
+                                    <span style={{ color: '#a3a3a3', fontFamily: 'monospace' }}>{hotel.uen}</span>
+                                </div>
+                                <div>
+                                    <label style={{ fontSize: '0.75rem', color: '#888', display: 'block', marginBottom: '0.25rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Location</label>
+                                    <span style={{ color: '#a3a3a3' }}>{hotel.location}</span>
+                                </div>
                             </div>
-                            <div>
-                                <label style={{ fontSize: '0.75rem', color: '#888', display: 'block' }}>UEN</label>
-                                <span style={{ fontFamily: 'monospace' }}>{hotel.uen}</span>
-                            </div>
-                            <div>
-                                <label style={{ fontSize: '0.75rem', color: '#888', display: 'block' }}>Location</label>
-                                <span>{hotel.location}</span>
+
+                            {/* Footer */}
+                            <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                                <button
+                                    onClick={closeProfile}
+                                    className="btn btn-ghost"
+                                    style={{ width: '100%' }}
+                                >
+                                    Close
+                                </button>
                             </div>
                         </div>
                     </div>
-                </div>
+                </>
             )}
 
             {/* Ban Modal */}
