@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { banUser, unbanUser, unverifyUser, toggleSubscription, deleteUser, removeUser } from '../actions';
 import { MoreHorizontal, Eye, Ban, ShieldX, RotateCcw, X, ToggleLeft, ToggleRight, Trash2, UserX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -86,14 +87,30 @@ export function HotelActions({ userId, hotelProfileId, isActive, isVerified, sub
         });
     };
 
-    // Close profile modal on Escape key
-    const closeProfile = useCallback(() => setShowProfile(false), []);
+    // Track if component is mounted (for SSR-safe portal)
+    const [isMounted, setIsMounted] = useState(false);
+    useEffect(() => { setIsMounted(true); }, []);
 
+    // Close handlers
+    const closeProfile = useCallback(() => setShowProfile(false), []);
+    const closeBanModal = useCallback(() => { setShowBanModal(false); setBanReason(''); }, []);
+    const closeDeleteModal = useCallback(() => setShowDeleteModal(false), []);
+    const closeRemoveModal = useCallback(() => { setShowRemoveModal(false); setRemoveReason(''); }, []);
+
+    // Check if any modal is open
+    const anyModalOpen = showProfile || showBanModal || showDeleteModal || showRemoveModal;
+
+    // Escape key and scroll lock for all modals
     useEffect(() => {
-        if (!showProfile) return;
+        if (!anyModalOpen) return;
 
         const handleEscape = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') closeProfile();
+            if (e.key === 'Escape') {
+                closeProfile();
+                closeBanModal();
+                closeDeleteModal();
+                closeRemoveModal();
+            }
         };
 
         // Lock body scroll
@@ -104,7 +121,7 @@ export function HotelActions({ userId, hotelProfileId, isActive, isVerified, sub
             document.body.style.overflow = '';
             document.removeEventListener('keydown', handleEscape);
         };
-    }, [showProfile, closeProfile]);
+    }, [anyModalOpen, closeProfile, closeBanModal, closeDeleteModal, closeRemoveModal]);
 
     return (
         <>
@@ -274,8 +291,8 @@ export function HotelActions({ userId, hotelProfileId, isActive, isVerified, sub
                 )}
             </div>
 
-            {/* Profile Modal - Fixed Overlay */}
-            {showProfile && (
+            {/* Modals rendered via Portal to escape table constraints */}
+            {isMounted && showProfile && createPortal(
                 <>
                     {/* Backdrop - click to close */}
                     <div
@@ -376,11 +393,12 @@ export function HotelActions({ userId, hotelProfileId, isActive, isVerified, sub
                             </div>
                         </div>
                     </div>
-                </>
+                </>,
+                document.body
             )}
 
             {/* Ban Modal */}
-            {showBanModal && (
+            {isMounted && showBanModal && createPortal(
                 <div style={{
                     position: 'fixed',
                     top: 0,
@@ -391,7 +409,7 @@ export function HotelActions({ userId, hotelProfileId, isActive, isVerified, sub
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    zIndex: 100
+                    zIndex: 9999
                 }}>
                     <div className="card" style={{ width: '100%', maxWidth: '400px', padding: '1.5rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -432,11 +450,12 @@ export function HotelActions({ userId, hotelProfileId, isActive, isVerified, sub
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* Delete Modal */}
-            {showDeleteModal && (
+            {isMounted && showDeleteModal && createPortal(
                 <div style={{
                     position: 'fixed',
                     top: 0,
@@ -447,7 +466,7 @@ export function HotelActions({ userId, hotelProfileId, isActive, isVerified, sub
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    zIndex: 100
+                    zIndex: 9999
                 }}>
                     <div className="card" style={{ width: '100%', maxWidth: '400px', padding: '1.5rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -483,11 +502,12 @@ export function HotelActions({ userId, hotelProfileId, isActive, isVerified, sub
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* Remove Modal */}
-            {showRemoveModal && (
+            {isMounted && showRemoveModal && createPortal(
                 <div style={{
                     position: 'fixed',
                     top: 0,
@@ -498,7 +518,7 @@ export function HotelActions({ userId, hotelProfileId, isActive, isVerified, sub
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    zIndex: 100
+                    zIndex: 9999
                 }}>
                     <div className="card" style={{ width: '100%', maxWidth: '450px', padding: '1.5rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -545,7 +565,8 @@ export function HotelActions({ userId, hotelProfileId, isActive, isVerified, sub
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </>
     );
