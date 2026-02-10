@@ -20,13 +20,13 @@ export function UserNav({ user }: UserNavProps) {
             </span>
 
             {user.role === 'WORKER' && (
-                <Link href="/dashboard/worker" className="btn btn-primary btn-sm">
+                <Link href="/dashboard" className="btn btn-primary btn-sm">
                     Dashboard
                 </Link>
             )}
 
             {user.role === 'HOTEL' && (
-                <Link href="/dashboard/hotel" className="btn btn-primary btn-sm">
+                <Link href="/hotel" className="btn btn-primary btn-sm">
                     My Hotel
                 </Link>
             )}
