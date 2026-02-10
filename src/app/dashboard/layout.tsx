@@ -1,5 +1,6 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+import { ShyftHelper } from '@/components/ShyftHelper';
 import Link from 'next/link';
 import {
     Home,
@@ -121,6 +122,9 @@ export default async function DashboardLayout({
             }}>
                 {children}
             </main>
+
+            {/* ShyftHelper Chatbot */}
+            <ShyftHelper />
         </div>
     );
 }
