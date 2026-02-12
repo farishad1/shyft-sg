@@ -171,21 +171,28 @@ export async function acceptApplication(applicationId: string) {
         data: { status: 'ACCEPTED', respondedAt: new Date() },
     });
 
-    // Mark job as filled
-    await prisma.jobPosting.update({
+    // Decrement open slots
+    const updatedJob = await prisma.jobPosting.update({
         where: { id: application.jobPostingId },
-        data: { isFilled: true },
+        data: { slotsOpen: { decrement: 1 } },
     });
 
-    // Decline all other applications for this job
-    await prisma.application.updateMany({
-        where: {
-            jobPostingId: application.jobPostingId,
-            id: { not: applicationId },
-            status: 'PENDING'
-        },
-        data: { status: 'DECLINED', declineReason: 'Position filled', respondedAt: new Date() },
-    });
+    // If no slots left, mark as filled and decline pending applications
+    if (updatedJob.slotsOpen <= 0) {
+        await prisma.jobPosting.update({
+            where: { id: application.jobPostingId },
+            data: { isFilled: true, isActive: false },
+        });
+
+        await prisma.application.updateMany({
+            where: {
+                jobPostingId: application.jobPostingId,
+                id: { not: applicationId },
+                status: 'PENDING'
+            },
+            data: { status: 'DECLINED', declineReason: 'Position filled', respondedAt: new Date() },
+        });
+    }
 
     revalidatePath('/hotel');
     revalidatePath('/hotel/jobs');

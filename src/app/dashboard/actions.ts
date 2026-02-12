@@ -43,7 +43,7 @@ export async function applyForJob(jobPostingId: string) {
         return { success: false, error: 'Job posting not found' };
     }
 
-    if (!jobPosting.isActive || jobPosting.isFilled) {
+    if (!jobPosting.isActive || jobPosting.isFilled || jobPosting.slotsOpen <= 0) {
         return { success: false, error: 'This position is no longer available' };
     }
 
