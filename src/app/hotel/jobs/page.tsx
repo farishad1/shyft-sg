@@ -73,7 +73,8 @@ export default async function HotelJobsPage() {
                                 style={{
                                     padding: '1.5rem',
                                     textDecoration: 'none',
-                                    opacity: isPast ? 0.6 : 1,
+                                    opacity: isPast ? 0.5 : 1,
+                                    filter: isPast ? 'grayscale(1)' : 'none',
                                     transition: 'transform 0.2s'
                                 }}
                             >

@@ -106,8 +106,10 @@ export async function rateWorker(shiftId: string, rating: number, review?: strin
         return { success: false, error: 'Shift not found or unauthorized' };
     }
 
-    if (!shift.isCompleted) {
-        return { success: false, error: 'Cannot rate before shift is completed' };
+    // Allow rating if shift is completed OR if the shift end time has passed
+    const shiftEnded = new Date(shift.endTime) < new Date();
+    if (!shift.isCompleted && !shiftEnded) {
+        return { success: false, error: 'Cannot rate before shift is completed or ended' };
     }
 
     // Update the shift with the rating
@@ -160,8 +162,10 @@ export async function rateHotel(shiftId: string, rating: number, review?: string
         return { success: false, error: 'Shift not found or unauthorized' };
     }
 
-    if (!shift.isCompleted) {
-        return { success: false, error: 'Cannot rate before shift is completed' };
+    // Allow rating if shift is completed OR if the shift end time has passed
+    const shiftEnded = new Date(shift.endTime) < new Date();
+    if (!shift.isCompleted && !shiftEnded) {
+        return { success: false, error: 'Cannot rate before shift is completed or ended' };
     }
 
     // Update the shift with the rating
