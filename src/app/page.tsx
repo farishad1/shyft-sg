@@ -1,8 +1,27 @@
 import Link from 'next/link';
 import { Navbar, LiveTicker, FAQ, ContactForm } from '@/components';
 import { UserPlus, Search } from 'lucide-react';
+import prisma from '@/lib/prisma';
 
-export default function HomePage() {
+export const dynamic = 'force-dynamic';
+
+export default async function HomePage() {
+  if (!prisma) return <div>Database Connection Error</div>;
+
+  const latestShifts = await prisma.jobPosting.findMany({
+    where: { isActive: true, isFilled: false },
+    orderBy: { createdAt: 'desc' },
+    take: 5,
+    include: { hotel: true }
+  });
+
+  const formattedShifts = latestShifts.map(shift => ({
+    id: shift.id,
+    title: shift.title,
+    hotelName: shift.hotel.hotelName,
+    hourlyPay: shift.hourlyPay
+  }));
+
   return (
     <>
       <Navbar />
@@ -27,7 +46,7 @@ export default function HomePage() {
       </section>
 
       {/* Live Ticker */}
-      <LiveTicker />
+      <LiveTicker shifts={formattedShifts} />
 
       {/* How It Works Section */}
       <section id="how-it-works" className="section">

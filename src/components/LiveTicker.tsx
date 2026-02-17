@@ -2,40 +2,41 @@
 
 import { useEffect, useRef } from 'react';
 
-// Example shift postings for the live ticker
-const TICKER_ITEMS = [
-    { role: 'Front Desk', location: 'Bugis', pay: 15 },
-    { role: 'Housekeeping', location: 'Orchard', pay: 14 },
-    { role: 'Night Porter', location: 'Marina Bay', pay: 18 },
-    { role: 'Concierge', location: 'Sentosa', pay: 16 },
-    { role: 'F&B Service', location: 'Raffles Place', pay: 15 },
-    { role: 'Room Attendant', location: 'Clarke Quay', pay: 14 },
-    { role: 'Bellhop', location: 'Tanjong Pagar', pay: 13 },
-    { role: 'Guest Relations', location: 'Chinatown', pay: 17 },
-];
+interface LiveTickerProps {
+    shifts?: {
+        id: string;
+        title: string;
+        hotelName: string;
+        hourlyPay: number;
+    }[];
+}
 
-export function LiveTicker() {
+export function LiveTicker({ shifts = [] }: LiveTickerProps) {
     const tickerRef = useRef<HTMLDivElement>(null);
 
+    // Fallback if no shifts are passed
+    const displayShifts = shifts.length > 0 ? shifts : [
+        { id: '1', title: 'Front Desk', hotelName: 'The Quay Hotel', hourlyPay: 15 },
+        { id: '2', title: 'Housekeeping', hotelName: 'Lloyd\'s Inn', hourlyPay: 16 },
+        { id: '3', title: 'Barista', hotelName: 'Warehouse Hotel', hourlyPay: 14 },
+    ];
+
     useEffect(() => {
-        // Duplicate items for seamless scrolling
-        if (tickerRef.current) {
-            const ticker = tickerRef.current;
-            const tickerContent = ticker.innerHTML;
-            ticker.innerHTML = tickerContent + tickerContent;
-        }
+        // Simple CSS animation is handled by class
     }, []);
 
     return (
         <div className="ticker-wrap">
             <div className="ticker" ref={tickerRef}>
-                {TICKER_ITEMS.map((item, index) => (
-                    <div key={index} className="ticker-item">
-                        <span>{item.role}</span>
-                        <span>@</span>
-                        <span>{item.location}</span>
-                        <span>—</span>
-                        <span className="pay">${item.pay}/hr</span>
+                {[...displayShifts, ...displayShifts, ...displayShifts].map((item, index) => (
+                    <div key={`${item.id}-${index}`} className="ticker-item">
+                        <span style={{ fontWeight: 600 }}>{item.title}</span>
+                        <span style={{ color: 'var(--accent)' }}>@</span>
+                        <span>{item.hotelName}</span>
+                        <span style={{ color: '#666' }}>—</span>
+                        <span className="pay" style={{ color: 'var(--accent)', fontWeight: 700 }}>
+                            ${item.hourlyPay.toFixed(2)}/hr
+                        </span>
                     </div>
                 ))}
             </div>
