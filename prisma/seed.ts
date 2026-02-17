@@ -5,20 +5,31 @@ import pg from 'pg';
 import bcrypt from 'bcrypt';
 import { AUTH_CONFIG } from '../src/lib/constants';
 
-// 1. Initialize the Driver Adapter (Mandatory for Prisma 7 standalone scripts)
+// 1. Get the connection string from environment variables
 const connectionString = process.env.DATABASE_URL;
+
+/**
+ * 🛠️ TYPESCRIPT GUARD
+ * Vercel's build process checks every file. If connectionString is missing, 
+ * the .replace() and .substring() calls below would crash. This check 
+ * proves to TypeScript that connectionString is a string before we use it.
+ */
 if (!connectionString) {
-    console.error('❌ DATABASE_URL is not set. Check your .env file.');
+    console.error('❌ DATABASE_URL is not set. Check your environment variables.');
     process.exit(1);
 }
 
+// 2. Initialize the Driver Adapter (Mandatory for Prisma 7 standalone scripts)
 const pool = new pg.Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
     console.log('🌱 Starting seed...');
-    console.log(`🔌 DB: ${connectionString.replace(/:[^@]+@/, ':****@').substring(0, 50)}...`);
+    
+    // Mask the URL for safe logging (TS now knows this is safe)
+    const maskedUrl = connectionString.replace(/:[^@]+@/, ':****@').substring(0, 50);
+    console.log(`🔌 DB: ${maskedUrl}...`);
 
     // -----------------------------------
     // 1. Admin User
@@ -56,7 +67,7 @@ async function main() {
             name: 'The Warehouse Hotel',
             uen: '201700001A',
             location: '320 Havelock Road, Singapore',
-            description: 'A meticulously restored heritage building in a former godown on the banks of the Singapore River.',
+            description: 'A heritage building on the banks of the Singapore River.',
             tier: 'PLATINUM' as const,
             latitude: 1.2866,
             longitude: 103.8395,
@@ -66,7 +77,7 @@ async function main() {
             name: "Lloyd's Inn",
             uen: '201700002B',
             location: '2 Lloyd Road, Singapore',
-            description: 'A raw and minimalist boutique hotel tucked away in a quiet corner of Orchard Road.',
+            description: 'A minimalist boutique hotel near Orchard Road.',
             tier: 'GOLD' as const,
             latitude: 1.2963,
             longitude: 103.8396,
@@ -76,7 +87,7 @@ async function main() {
             name: 'Kinn Capsule Hotel',
             uen: '201700003C',
             location: '39 South Bridge Road, Singapore',
-            description: 'Experience futuristic living in the heart of Boat Quay.',
+            description: 'Futuristic capsule living in Boat Quay.',
             tier: 'SILVER' as const,
             latitude: 1.2887,
             longitude: 103.8491,
@@ -122,12 +133,12 @@ async function main() {
 
         console.log(`    ✅ ${hotel.name} (${hotel.tier})`);
 
-        // Cleanup existing mock shifts to avoid duplicates
+        // Cleanup existing shifts to avoid duplicates
         await prisma.jobPosting.deleteMany({
             where: { hotelId: profile.id, shiftDate: { gt: new Date() } },
         });
 
-        const positions = ['Front Desk Agent', 'Housekeeping', 'Barista', 'Night Audit', 'Bellhop', 'Concierge'];
+        const positions = ['Front Desk Agent', 'Housekeeping', 'Barista', 'Night Audit'];
 
         for (let i = 0; i < 4; i++) {
             const title = positions[Math.floor(Math.random() * positions.length)];
@@ -161,15 +172,14 @@ async function main() {
             });
         }
     }
-
-    console.log('✅ 12 Mock Shifts Generated.');
 }
 
 main()
     .then(async () => {
+        console.log('✅ Mock Data Generated.');
         console.log('🏁 Seed completed.');
         await prisma.$disconnect();
-        await pool.end(); // Mandatory: Close the pool so the process can exit
+        await pool.end();
     })
     .catch(async (e) => {
         console.error('❌ Seed failed:', e);
