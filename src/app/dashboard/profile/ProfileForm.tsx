@@ -60,116 +60,121 @@ export function ProfileForm({
         <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-400">First Name</label>
+                    <label className="label">First Name</label>
                     <input
                         type="text"
                         required
                         value={formData.firstName}
                         onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                        className="w-full bg-[#111] border border-[#333] rounded-lg p-3 text-white focus:outline-none focus:border-[var(--accent)] transition-colors"
+                        className="input"
                         placeholder="Enter first name"
                     />
                 </div>
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-400">Last Name</label>
+                    <label className="label">Last Name</label>
                     <input
                         type="text"
                         required
                         value={formData.lastName}
                         onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                        className="w-full bg-[#111] border border-[#333] rounded-lg p-3 text-white focus:outline-none focus:border-[var(--accent)] transition-colors"
+                        className="input"
                         placeholder="Enter last name"
                     />
                 </div>
             </div>
 
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-400">Email Address</label>
+                <label className="label">Email Address</label>
                 <input
                     type="email"
                     disabled
                     value={email}
-                    className="w-full bg-[#111] border border-[#333] rounded-lg p-3 text-gray-500 cursor-not-allowed opacity-70"
+                    className="input"
+                    style={{ opacity: 0.6, cursor: 'not-allowed', color: '#9C8F84' }}
                 />
-                <p className="text-xs text-gray-600">Email cannot be changed. Contact support for assistance.</p>
+                <p style={{ fontSize: '0.75rem', color: '#9C8F84' }}>Email cannot be changed. Contact support for assistance.</p>
             </div>
 
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-400 flex items-center justify-between">
+                <label className="label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     Phone Number
                     {isPhoneVerified && (
-                        <span className="text-xs text-green-500 flex items-center gap-1">
+                        <span style={{ fontSize: '0.75rem', color: '#22c55e', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                             <Check size={12} /> Verified
                         </span>
                     )}
                 </label>
-                <div className="flex gap-3">
-                    <div className="bg-[#111] border border-[#333] rounded-lg p-3 text-gray-400 w-[80px] text-center">
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    <div style={{
+                        background: '#FAF6F0',
+                        border: '1px solid #E2D3C2',
+                        borderRadius: 'var(--radius-md)',
+                        padding: '0.75rem',
+                        color: '#9C8F84',
+                        width: '80px',
+                        textAlign: 'center'
+                    }}>
                         +65
                     </div>
                     <input
                         type="tel"
                         value={formData.phoneNumber.replace(/^\+65/, '')}
                         onChange={(e) => {
-                            // Only allow numbers
                             const val = e.target.value.replace(/[^0-9]/g, '');
                             setFormData({ ...formData, phoneNumber: `+65${val}` });
                         }}
                         disabled={isPhoneVerified}
                         required
-                        className={`flex-1 bg-[#111] border border-[#333] rounded-lg p-3 text-white focus:outline-none focus:border-[var(--accent)] transition-colors ${isPhoneVerified ? 'cursor-not-allowed opacity-70 text-gray-500' : ''}`}
+                        className="input"
+                        style={{ flex: 1, ...(isPhoneVerified ? { opacity: 0.6, cursor: 'not-allowed' } : {}) }}
                         placeholder="8123 4567"
                     />
                 </div>
                 {isPhoneVerified && (
-                    <p className="text-xs text-gray-600">Verified phone numbers cannot be changed for security.</p>
+                    <p style={{ fontSize: '0.75rem', color: '#9C8F84' }}>Verified phone numbers cannot be changed for security.</p>
                 )}
             </div>
 
             <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-400">Bio / About Me</label>
+                <label className="label">Bio / About Me</label>
                 <textarea
                     value={formData.bio}
                     onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                    className="w-full bg-[#111] border border-[#333] rounded-lg p-3 text-white min-h-[120px] focus:outline-none focus:border-[var(--accent)] transition-colors resize-y"
+                    className="input"
+                    style={{ minHeight: '120px', resize: 'vertical' }}
                     placeholder="Tell hotels about your experience and skills..."
                     maxLength={500}
                 />
-                <div className="flex justify-end">
-                    <span className="text-xs text-gray-600">{formData.bio.length}/500</span>
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#9C8F84' }}>{formData.bio.length}/500</span>
                 </div>
             </div>
 
             {status === 'error' && (
-                <div className="p-3 bg-red-900/20 border border-red-900/50 rounded-lg flex items-center gap-2 text-red-500 text-sm">
+                <div style={{ padding: '0.75rem', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ef4444', fontSize: '0.875rem' }}>
                     <AlertCircle size={16} />
                     {errorMessage}
                 </div>
             )}
 
             {status === 'success' && (
-                <div className="p-3 bg-green-900/20 border border-green-900/50 rounded-lg flex items-center gap-2 text-green-500 text-sm">
+                <div style={{ padding: '0.75rem', background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#22c55e', fontSize: '0.875rem' }}>
                     <Check size={16} />
                     Profile updated successfully!
                 </div>
             )}
 
-            <div className="pt-4">
+            <div style={{ paddingTop: '1rem' }}>
                 <button
                     type="submit"
                     disabled={status === 'loading' || status === 'success'}
-                    className="w-full md:w-auto px-8 btn btn-primary flex items-center justify-center gap-2"
+                    className="btn btn-primary"
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                 >
                     {status === 'loading' ? (
-                        <>
-                            <Loader2 size={16} className="animate-spin" />
-                            Saving...
-                        </>
+                        <><Loader2 size={16} className="animate-spin" />Saving...</>
                     ) : status === 'success' ? (
-                        <>
-                            <Check size={16} />
-                            Saved
-                        </>
+                        <><Check size={16} />Saved</>
                     ) : (
                         'Save Changes'
                     )}

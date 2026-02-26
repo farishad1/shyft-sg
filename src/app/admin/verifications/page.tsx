@@ -43,12 +43,12 @@ export default async function VerificationsPage({
             </h1>
 
             {/* Tabs */}
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid #333' }}>
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid #E2D3C2' }}>
                 <Link
                     href="/admin/verifications?tab=workers"
                     style={{
                         padding: '1rem',
-                        color: tab === 'workers' ? '#fff' : '#888',
+                        color: tab === 'workers' ? '#2F2A26' : '#9C8F84',
                         borderBottom: tab === 'workers' ? '2px solid var(--accent)' : 'none',
                         textDecoration: 'none',
                         fontWeight: 500
@@ -60,7 +60,7 @@ export default async function VerificationsPage({
                     href="/admin/verifications?tab=hotels"
                     style={{
                         padding: '1rem',
-                        color: tab === 'hotels' ? '#fff' : '#888',
+                        color: tab === 'hotels' ? '#2F2A26' : '#9C8F84',
                         borderBottom: tab === 'hotels' ? '2px solid var(--accent)' : 'none',
                         textDecoration: 'none',
                         fontWeight: 500
@@ -74,7 +74,7 @@ export default async function VerificationsPage({
             {tab === 'workers' ? (
                 <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                        <thead style={{ background: '#111', color: '#888', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                        <thead style={{ background: '#5A3E2B', color: '#E6C7A1', fontSize: '0.75rem', textTransform: 'uppercase' }}>
                             <tr>
                                 <th style={{ padding: '1rem' }}>Name</th>
                                 <th style={{ padding: '1rem' }}>Age</th>
@@ -89,10 +89,10 @@ export default async function VerificationsPage({
                                 const isMinor = age < 16; // BUSINESS_RULES.MINOR_AGE limit is just a flag here
 
                                 return (
-                                    <tr key={worker.id} style={{ borderBottom: '1px solid #222' }}>
+                                    <tr key={worker.id} style={{ borderBottom: '1px solid #E2D3C2' }}>
                                         <td style={{ padding: '1rem' }}>
                                             <div style={{ fontWeight: 500 }}>{worker.firstName} {worker.lastName}</div>
-                                            <div style={{ fontSize: '0.875rem', color: '#888' }}>{worker.user.email}</div>
+                                            <div style={{ fontSize: '0.875rem', color: '#9C8F84' }}>{worker.user.email}</div>
                                         </td>
                                         <td style={{ padding: '1rem' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -107,7 +107,7 @@ export default async function VerificationsPage({
                                         <td style={{ padding: '1rem' }}>
                                             <div className="badge badge-gray">{worker.workPassType}</div>
                                             {worker.workPassType === 'STUDENT_PASS' && (
-                                                <div style={{ fontSize: '0.75rem', color: '#888', marginTop: '0.25rem' }}>
+                                                <div style={{ fontSize: '0.75rem', color: '#9C8F84', marginTop: '0.25rem' }}>
                                                     {worker.schoolName}
                                                 </div>
                                             )}
@@ -126,7 +126,7 @@ export default async function VerificationsPage({
                             })}
                             {workers.length === 0 && (
                                 <tr>
-                                    <td colSpan={5} style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>
+                                    <td colSpan={5} style={{ padding: '2rem', textAlign: 'center', color: '#9C8F84' }}>
                                         No pending worker verifications
                                     </td>
                                 </tr>
@@ -137,7 +137,7 @@ export default async function VerificationsPage({
             ) : (
                 <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                        <thead style={{ background: '#111', color: '#888', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                        <thead style={{ background: '#5A3E2B', color: '#E6C7A1', fontSize: '0.75rem', textTransform: 'uppercase' }}>
                             <tr>
                                 <th style={{ padding: '1rem' }}>Hotel Name</th>
                                 <th style={{ padding: '1rem' }}>UEN</th>
@@ -147,10 +147,10 @@ export default async function VerificationsPage({
                         </thead>
                         <tbody>
                             {hotels.map((hotel) => (
-                                <tr key={hotel.id} style={{ borderBottom: '1px solid #222' }}>
+                                <tr key={hotel.id} style={{ borderBottom: '1px solid #E2D3C2' }}>
                                     <td style={{ padding: '1rem' }}>
                                         <div style={{ fontWeight: 500 }}>{hotel.hotelName}</div>
-                                        <div style={{ fontSize: '0.875rem', color: '#888' }}>{hotel.user.email}</div>
+                                        <div style={{ fontSize: '0.875rem', color: '#9C8F84' }}>{hotel.user.email}</div>
                                     </td>
                                     <td style={{ padding: '1rem' }}>{hotel.uen}</td>
                                     <td style={{ padding: '1rem' }}>{hotel.location}</td>
@@ -161,7 +161,7 @@ export default async function VerificationsPage({
                             ))}
                             {hotels.length === 0 && (
                                 <tr>
-                                    <td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>
+                                    <td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: '#9C8F84' }}>
                                         No pending hotel verifications
                                     </td>
                                 </tr>

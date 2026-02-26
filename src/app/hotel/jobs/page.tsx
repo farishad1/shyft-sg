@@ -34,7 +34,7 @@ export default async function HotelJobsPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <div>
                     <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.25rem' }}>My Job Postings</h1>
-                    <p style={{ color: '#888' }}>Manage your shift listings and applicants</p>
+                    <p style={{ color: '#9C8F84' }}>Manage your shift listings and applicants</p>
                 </div>
 
                 {hotelProfile.verificationStatus === 'VERIFIED' && (
@@ -49,7 +49,7 @@ export default async function HotelJobsPage() {
                 <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
                     <Calendar size={48} style={{ opacity: 0.3, marginBottom: '1rem' }} />
                     <h2 style={{ marginBottom: '0.5rem' }}>No Job Postings Yet</h2>
-                    <p style={{ color: '#888', marginBottom: '1.5rem' }}>
+                    <p style={{ color: '#9C8F84', marginBottom: '1.5rem' }}>
                         Create your first job posting to start receiving applications.
                     </p>
                     {hotelProfile.verificationStatus === 'VERIFIED' && (
@@ -80,10 +80,10 @@ export default async function HotelJobsPage() {
                             >
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                     <div>
-                                        <h3 style={{ fontWeight: 600, fontSize: '1.125rem', marginBottom: '0.5rem', color: '#fff' }}>
+                                        <h3 style={{ fontWeight: 600, fontSize: '1.125rem', marginBottom: '0.5rem', color: '#2F2A26' }}>
                                             {job.title}
                                         </h3>
-                                        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', fontSize: '0.875rem', color: '#888' }}>
+                                        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', fontSize: '0.875rem', color: '#9C8F84' }}>
                                             <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                                 <Calendar size={14} />
                                                 {startDate.toLocaleDateString('en-SG', { weekday: 'short', month: 'short', day: 'numeric' })}
@@ -100,7 +100,7 @@ export default async function HotelJobsPage() {
                                     </div>
                                     <div style={{ textAlign: 'right' }}>
                                         <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--accent)' }}>
-                                            ${job.hourlyPay.toFixed(2)}<span style={{ fontSize: '0.75rem', color: '#888' }}>/hr</span>
+                                            ${job.hourlyPay.toFixed(2)}<span style={{ fontSize: '0.75rem', color: '#9C8F84' }}>/hr</span>
                                         </div>
                                         <span className={`badge ${job.isFilled ? 'badge-verified' : job.isActive ? 'badge-pending' : 'badge-gray'}`}>
                                             {job.isFilled ? 'Filled' : job.isActive ? 'Open' : 'Closed'}

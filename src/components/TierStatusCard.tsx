@@ -114,10 +114,10 @@ export function TierStatusCard({ tier, hoursWorked }: TierStatusCardProps) {
                             alignItems: 'center',
                             justifyContent: 'center'
                         }}>
-                            <Award size={24} color="#000" />
+                            <Award size={24} color="#5A3E2B" />
                         </div>
                         <div>
-                            <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>Current Tier</div>
+                            <div style={{ fontSize: '0.75rem', color: '#9C8F84', textTransform: 'uppercase' }}>Current Tier</div>
                             <div style={{ fontSize: '1.5rem', fontWeight: 700, color: config.color }}>{config.label}</div>
                         </div>
                     </div>
@@ -140,12 +140,12 @@ export function TierStatusCard({ tier, hoursWorked }: TierStatusCardProps) {
                 {nextTier ? (
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                            <span style={{ color: '#888' }}>{hoursWorked.toFixed(1)} hours worked</span>
+                            <span style={{ color: '#9C8F84' }}>{hoursWorked.toFixed(1)} hours worked</span>
                             <span style={{ color: config.color, fontWeight: 600 }}>{hoursToNext.toFixed(0)}h to {nextTier}</span>
                         </div>
                         <div style={{
                             height: '10px',
-                            background: '#333',
+                            background: '#E2D3C2',
                             borderRadius: '5px',
                             overflow: 'hidden'
                         }}>
@@ -214,7 +214,7 @@ function TierBenefitsModal({ tier, onClose }: { tier: Tier; onClose: () => void 
                 {/* Header */}
                 <div style={{
                     padding: '1.5rem',
-                    borderBottom: '1px solid #333',
+                    borderBottom: '1px solid #E2D3C2',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center'
@@ -241,8 +241,8 @@ function TierBenefitsModal({ tier, onClose }: { tier: Tier; onClose: () => void 
                                 style={{
                                     padding: '1rem',
                                     borderRadius: 'var(--radius-md)',
-                                    background: isCurrent ? config.bgColor : '#111',
-                                    border: isCurrent ? `2px solid ${config.color}` : '1px solid #333',
+                                    background: isCurrent ? config.bgColor : '#FAF6F0',
+                                    border: isCurrent ? `2px solid ${config.color}` : '1px solid #E2D3C2',
                                     opacity: isCurrent ? 1 : 0.7
                                 }}
                             >
@@ -256,18 +256,18 @@ function TierBenefitsModal({ tier, onClose }: { tier: Tier; onClose: () => void 
                                         alignItems: 'center',
                                         justifyContent: 'center'
                                     }}>
-                                        <Award size={16} color="#000" />
+                                        <Award size={16} color="#5A3E2B" />
                                     </div>
                                     <div>
                                         <div style={{ fontWeight: 700, color: config.color }}>{benefits.title}</div>
-                                        <div style={{ fontSize: '0.75rem', color: '#888' }}>{benefits.description}</div>
+                                        <div style={{ fontSize: '0.75rem', color: '#9C8F84' }}>{benefits.description}</div>
                                     </div>
                                     {isCurrent && (
                                         <span style={{
                                             marginLeft: 'auto',
                                             padding: '0.25rem 0.75rem',
                                             background: config.color,
-                                            color: '#000',
+                                            color: '#5A3E2B',
                                             borderRadius: 'var(--radius-full)',
                                             fontSize: '0.75rem',
                                             fontWeight: 600
@@ -278,7 +278,7 @@ function TierBenefitsModal({ tier, onClose }: { tier: Tier; onClose: () => void 
                                 </div>
                                 <ul style={{ display: 'grid', gap: '0.5rem' }}>
                                     {benefits.benefits.map((benefit, i) => (
-                                        <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#ccc' }}>
+                                        <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#5C524A' }}>
                                             <span>{benefit.icon}</span>
                                             <span>{benefit.text}</span>
                                         </li>
@@ -290,8 +290,8 @@ function TierBenefitsModal({ tier, onClose }: { tier: Tier; onClose: () => void 
                 </div>
 
                 {/* Footer */}
-                <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid #333', background: '#111' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#888', fontSize: '0.875rem' }}>
+                <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid #E2D3C2', background: '#FAF6F0' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#9C8F84', fontSize: '0.875rem' }}>
                         <Headphones size={16} />
                         <span>Need help? <a href="/messages/support" style={{ color: 'var(--accent)' }}>Contact Support</a></span>
                     </div>

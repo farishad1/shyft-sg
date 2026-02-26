@@ -6,40 +6,46 @@
    ============================================ */
 
 :root {
-  /* Core Colors */
-  --background: #000000;
-  /* Deep Black */
-  --background-secondary: #0a0a0a;
-  /* Slightly lighter black */
-  --card: #1a1a1a;
-  /* Industrial Grey */
-  --card-hover: #242424;
-  /* Lighter grey for hover */
-  --border: #2a2a2a;
-  /* Subtle border */
+  /* Core Colors — Boutique White */
+  --background: #FFFFFF;
+  --background-secondary: #F9F7F5;
+  --card: #FFFFFF;
+  --card-hover: #FAF6F0;
+  --border: #E2D3C2;
 
-  /* Shyft Gold */
-  --accent: #EFBF04;
-  --accent-hover: #D4A804;
-  --accent-muted: rgba(239, 191, 4, 0.15);
+  /* Brand Palette */
+  --brand-white: #FFFFFF;
+  --brand-gold: #D4A373;
+  --brand-brown: #5A3E2B;
+  --brand-sand: #E6C7A1;
+  --brand-offwhite: #FAF6F0;
+  --brand-muted-sand: #9C8F84;
+  --body-brown: #5C524A;
+  --deep-heading-brown: #2F2A26;
+  --light-sand-divider: #E2D3C2;
+
+  /* Accent (primary CTA) */
+  --accent: #D4A373;
+  --accent-hover: #C4935F;
+  --accent-muted: rgba(212, 163, 115, 0.15);
 
   /* Text */
-  --foreground: #FFFFFF;
-  --foreground-secondary: #9CA3AF;
-  --foreground-muted: #6B7280;
+  --foreground: #5C524A;
+  --foreground-secondary: #9C8F84;
+  --foreground-muted: #B5A99E;
 
   /* Status Colors */
   --success: #22C55E;
   --success-muted: rgba(34, 197, 94, 0.15);
-  --warning: #F59E0B;
-  --warning-muted: rgba(245, 158, 11, 0.15);
+  --warning: #D97706;
+  --warning-muted: rgba(217, 119, 6, 0.15);
   --error: #EF4444;
   --error-muted: rgba(239, 68, 68, 0.15);
 
   /* Tier Colors */
-  --tier-silver: #C0C0C0;
-  --tier-gold: #EFBF04;
-  --tier-platinum: #E5E4E2;
+  --tier-silver: #A0A0A0;
+  --tier-gold: #D4A373;
+  --tier-platinum: #8B7355;
 
   /* Spacing */
   --radius-sm: 0.375rem;
@@ -58,6 +64,14 @@
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
   --color-card: var(--card);
+  --color-brand-white: var(--brand-white);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-brown: var(--brand-brown);
+  --color-brand-sand: var(--brand-sand);
+  --color-brand-offwhite: var(--brand-offwhite);
+  --color-body-brown: var(--body-brown);
+  --color-deep-heading-brown: var(--deep-heading-brown);
+  --color-light-sand-divider: var(--light-sand-divider);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -75,8 +89,8 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: #FFFFFF;
+  color: #5C524A;
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -96,6 +110,13 @@ h6 {
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.02em;
+}
+
+h1,
+h2,
+h3 {
+  color: #2F2A26;
+  font-family: Georgia, 'Times New Roman', serif;
 }
 
 h1 {
@@ -119,7 +140,7 @@ h4 {
 }
 
 .text-muted {
-  color: var(--foreground-secondary);
+  color: #9C8F84;
 }
 
 /* ============================================
@@ -127,8 +148,8 @@ h4 {
    ============================================ */
 
 .card {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: #FFFFFF;
+  border: 1px solid #E2D3C2;
   border-radius: var(--radius-lg);
   padding: 1.5rem;
   transition: all var(--transition-normal);
@@ -138,21 +159,21 @@ h4 {
   background: var(--card-hover);
   border-color: var(--accent);
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(239, 191, 4, 0.1);
+  box-shadow: 0 8px 30px rgba(212, 163, 115, 0.15);
 }
 
 .card-static {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: #FFFFFF;
+  border: 1px solid #E2D3C2;
   border-radius: var(--radius-lg);
   padding: 1.5rem;
 }
 
-/* Glassmorphism variant */
+/* Warm variant */
 .card-glass {
-  background: rgba(26, 26, 26, 0.8);
+  background: rgba(250, 246, 240, 0.9);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(239, 191, 4, 0.2);
+  border: 1px solid rgba(212, 163, 115, 0.3);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
 }
@@ -177,20 +198,20 @@ h4 {
 }
 
 .btn-primary {
-  background: var(--accent);
-  color: #000000;
+  background: #D4A373;
+  color: #FFFFFF;
 }
 
 .btn-primary:hover {
   background: var(--accent-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(239, 191, 4, 0.3);
+  box-shadow: 0 4px 20px rgba(212, 163, 115, 0.35);
 }
 
 .btn-secondary {
   background: transparent;
-  color: var(--accent);
-  border: 2px solid var(--accent);
+  color: #5A3E2B;
+  border: 2px solid #D4A373;
 }
 
 .btn-secondary:hover {
@@ -203,7 +224,8 @@ h4 {
 }
 
 .btn-ghost:hover {
-  background: var(--card);
+  background: var(--brand-sand);
+  color: var(--brand-brown);
 }
 
 .btn-lg {
@@ -223,8 +245,8 @@ h4 {
 .input {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: var(--background);
-  border: 1px solid var(--border);
+  background: #FFFFFF;
+  border: 1px solid #E2D3C2;
   border-radius: var(--radius-md);
   color: var(--foreground);
   font-size: 0.875rem;
@@ -246,7 +268,7 @@ h4 {
   font-weight: 500;
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
-  color: var(--foreground-secondary);
+  color: var(--brand-brown);
 }
 
 .checkbox-container {
@@ -332,9 +354,9 @@ h4 {
 .ticker-wrap {
   width: 100%;
   overflow: hidden;
-  background: var(--card);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  background: #E6C7A1;
+  border-top: 1px solid #D4A373;
+  border-bottom: 1px solid #D4A373;
   padding: 0.75rem 0;
 }
 
@@ -351,12 +373,12 @@ h4 {
   padding: 0 2rem;
   white-space: nowrap;
   font-size: 0.875rem;
-  color: var(--foreground-secondary);
+  color: #5A3E2B;
 }
 
 .ticker-item .pay {
-  color: var(--accent);
-  font-weight: 600;
+  color: #5A3E2B;
+  font-weight: 700;
 }
 
 @keyframes ticker {
@@ -385,7 +407,7 @@ h4 {
   padding: 1.25rem 0;
   background: transparent;
   border: none;
-  color: var(--foreground);
+  color: var(--brand-brown);
   font-size: 1rem;
   font-weight: 500;
   text-align: left;
@@ -422,7 +444,7 @@ h4 {
   left: 0;
   right: 0;
   z-index: 50;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(250, 246, 240, 0.92);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
 }
@@ -436,7 +458,7 @@ h4 {
 }
 
 .nav-link:hover {
-  color: var(--accent);
+  color: var(--brand-brown);
 }
 
 /* ============================================
@@ -451,9 +473,7 @@ h4 {
   align-items: center;
   text-align: center;
   padding: 2rem;
-  background:
-    radial-gradient(ellipse at top, rgba(239, 191, 4, 0.08) 0%, transparent 50%),
-    var(--background);
+  background: linear-gradient(135deg, #E6C7A1 0%, #D4A373 100%);
 }
 
 .hero-title {
@@ -461,15 +481,13 @@ h4 {
   font-weight: 800;
   letter-spacing: -0.03em;
   margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, var(--foreground) 0%, var(--accent) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #5A3E2B;
+  -webkit-text-fill-color: #5A3E2B;
 }
 
 .hero-subtitle {
   font-size: clamp(1rem, 3vw, 1.5rem);
-  color: var(--foreground-secondary);
+  color: #6B4F36;
   max-width: 600px;
   margin-bottom: 2rem;
 }
@@ -490,7 +508,7 @@ h4 {
   width: 3rem;
   height: 3rem;
   background: var(--accent);
-  color: #000000;
+  color: #FFFFFF;
   font-weight: 700;
   font-size: 1.25rem;
   border-radius: 50%;
@@ -508,14 +526,23 @@ h4 {
   font-size: 0.875rem;
 }
 
+/* Footer nav-links on dark brown background */
+footer .nav-link {
+  color: #E6C7A1;
+}
+
+footer .nav-link:hover {
+  color: #FAF6F0;
+}
+
 /* ============================================
    DASHBOARD LAYOUTS
    ============================================ */
 
 .sidebar {
   width: 280px;
-  background: var(--card);
-  border-right: 1px solid var(--border);
+  background: #5A3E2B;
+  border-right: 1px solid #4A3020;
   height: 100vh;
   position: fixed;
   left: 0;
@@ -527,6 +554,7 @@ h4 {
   margin-left: 280px;
   padding: 2rem;
   min-height: 100vh;
+  background: #FFFFFF;
 }
 
 /* ============================================
@@ -603,11 +631,11 @@ h4 {
 
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(239, 191, 4, 0.4);
+    box-shadow: 0 0 0 0 rgba(212, 163, 115, 0.4);
   }
 
   50% {
-    box-shadow: 0 0 0 10px rgba(239, 191, 4, 0);
+    box-shadow: 0 0 0 10px rgba(212, 163, 115, 0);
   }
 }
 

@@ -88,7 +88,7 @@ export default async function ShiftsPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <div>
                     <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.25rem' }}>Find Shifts</h1>
-                    <p style={{ color: '#888' }}>Browse available opportunities</p>
+                    <p style={{ color: '#9C8F84' }}>Browse available opportunities</p>
                 </div>
 
                 {isMinor && (

@@ -162,7 +162,7 @@ async function main() {
                         isActive: true,
                         isFilled: false,
                         slotsOpen: 1 + Math.floor(Math.random() * 3),
-                        note: 'Uniform provided. Please bring black shoes.',
+                        note: 'Flexible hospitality jobs at top-rated stays in Singapore. Uniform provided.',
                     },
                 });
             }

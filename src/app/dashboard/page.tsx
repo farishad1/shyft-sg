@@ -70,7 +70,7 @@ export default async function WorkerDashboardPage() {
                             <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '0.5rem', color: '#eab308' }}>
                                 Verification In Progress
                             </h2>
-                            <p style={{ color: '#ccc', marginBottom: '1rem' }}>
+                            <p style={{ color: '#9C8F84', marginBottom: '1rem' }}>
                                 Your profile is currently under review. This usually takes 24-48 hours.
                             </p>
                             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -81,8 +81,8 @@ export default async function WorkerDashboardPage() {
                     </div>
                 </div>
 
-                <div style={{ marginTop: '2rem', padding: '1.5rem', background: '#111', borderRadius: 'var(--radius-md)', border: '1px solid #333' }}>
-                    <h3 style={{ marginBottom: '1rem', color: '#888' }}>While You Wait...</h3>
+                <div style={{ marginTop: '2rem', padding: '1.5rem', background: '#FFFFFF', borderRadius: 'var(--radius-md)', border: '1px solid #E2D3C2' }}>
+                    <h3 style={{ marginBottom: '1rem', color: '#9C8F84' }}>While You Wait...</h3>
                     <ul style={{ listStyle: 'disc', paddingLeft: '1.5rem', color: '#888', lineHeight: 1.8 }}>
                         <li>Make sure your contact information is up to date</li>
                         <li>Review our <Link href="/#faq" style={{ color: 'var(--accent)' }}>FAQ</Link> to learn more about Shyft Sg</li>
@@ -101,7 +101,7 @@ export default async function WorkerDashboardPage() {
                     <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem' }}>
                         Welcome back, {workerProfile.firstName}!
                     </h1>
-                    <p style={{ color: '#888' }}>You&apos;re all set to find shifts.</p>
+                    <p style={{ color: '#9C8F84' }}>You&apos;re all set to find shifts.</p>
                 </div>
                 <div style={{
                     display: 'inline-flex',
@@ -155,8 +155,8 @@ export default async function WorkerDashboardPage() {
                 }}>
                     <Search size={24} color="var(--accent)" />
                     <div>
-                        <div style={{ fontWeight: 600, color: '#fff' }}>Find Shifts</div>
-                        <div style={{ fontSize: '0.875rem', color: '#888' }}>Browse available opportunities</div>
+                        <div style={{ fontWeight: 600, color: '#2F2A26' }}>Find Shifts</div>
+                        <div style={{ fontSize: '0.875rem', color: '#9C8F84' }}>Browse available opportunities</div>
                     </div>
                 </Link>
 
@@ -170,8 +170,8 @@ export default async function WorkerDashboardPage() {
                 }}>
                     <Calendar size={24} color="var(--accent)" />
                     <div>
-                        <div style={{ fontWeight: 600, color: '#fff' }}>My Schedule</div>
-                        <div style={{ fontSize: '0.875rem', color: '#888' }}>View upcoming shifts</div>
+                        <div style={{ fontWeight: 600, color: '#2F2A26' }}>My Schedule</div>
+                        <div style={{ fontSize: '0.875rem', color: '#9C8F84' }}>View upcoming shifts</div>
                     </div>
                 </Link>
 
@@ -185,19 +185,19 @@ export default async function WorkerDashboardPage() {
                 }}>
                     <DollarSign size={24} color="var(--accent)" />
                     <div>
-                        <div style={{ fontWeight: 600, color: '#fff' }}>Earnings</div>
-                        <div style={{ fontSize: '0.875rem', color: '#888' }}>View shift history & pay</div>
+                        <div style={{ fontWeight: 600, color: '#2F2A26' }}>Earnings</div>
+                        <div style={{ fontSize: '0.875rem', color: '#9C8F84' }}>View shift history & pay</div>
                     </div>
                 </Link>
             </div>
 
             {/* Recent Shifts */}
             <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid #333' }}>
+                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid #E2D3C2' }}>
                     <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Recent Shifts</h2>
                 </div>
                 {workerProfile.shifts.length === 0 ? (
-                    <div style={{ padding: '3rem', textAlign: 'center', color: '#888' }}>
+                    <div style={{ padding: '3rem', textAlign: 'center', color: '#9C8F84' }}>
                         <Calendar size={48} style={{ opacity: 0.3, marginBottom: '1rem' }} />
                         <p>No shifts yet. Start browsing to find your first opportunity!</p>
                         <Link href="/dashboard/shifts" className="btn btn-primary" style={{ marginTop: '1rem' }}>
@@ -205,7 +205,7 @@ export default async function WorkerDashboardPage() {
                         </Link>
                     </div>
                 ) : (
-                    <div style={{ padding: '1rem', color: '#888', textAlign: 'center' }}>
+                    <div style={{ padding: '1rem', color: '#9C8F84', textAlign: 'center' }}>
                         <Link href="/dashboard/history" className="btn btn-ghost">
                             View All Shifts →
                         </Link>
@@ -223,7 +223,7 @@ function StatCard({ label, value, icon }: { label: string; value: string; icon: 
                 width: '2.5rem',
                 height: '2.5rem',
                 borderRadius: '50%',
-                background: '#222',
+                background: 'rgba(212, 163, 115, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
@@ -231,8 +231,8 @@ function StatCard({ label, value, icon }: { label: string; value: string; icon: 
                 {icon}
             </div>
             <div>
-                <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>{label}</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 700 }}>{value}</div>
+                <div style={{ fontSize: '0.75rem', color: '#9C8F84', textTransform: 'uppercase' }}>{label}</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#5A3E2B' }}>{value}</div>
             </div>
         </div>
     );

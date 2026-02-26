@@ -14,15 +14,15 @@ export async function Navbar() {
                     <div style={{
                         width: '2.5rem',
                         height: '2.5rem',
-                        background: '#000',
-                        border: '2px solid var(--accent)',
+                        background: '#5A3E2B',
+                        border: '2px solid #D4A373',
                         borderRadius: 'var(--radius-md)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontWeight: 800,
                         fontSize: '1.25rem',
-                        color: 'var(--accent)',
+                        color: '#D4A373',
                     }}>
                         S
                     </div>

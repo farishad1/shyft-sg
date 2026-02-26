@@ -216,10 +216,10 @@ function RegisterForm() {
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                                 <div style={{
                                     padding: '0.75rem 1rem',
-                                    background: '#222',
+                                    background: '#FAF6F0',
                                     border: '1px solid var(--border)',
                                     borderRadius: 'var(--radius-md)',
-                                    color: '#888',
+                                    color: '#9C8F84',
                                     display: 'flex',
                                     alignItems: 'center'
                                 }}>
@@ -265,8 +265,8 @@ function RegisterForm() {
 
                             {/* OTP Input */}
                             {showOtpInput && !isPhoneVerified && (
-                                <div style={{ marginTop: '0.75rem', padding: '1rem', background: '#111', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
-                                    <p style={{ fontSize: '0.875rem', color: '#888', marginBottom: '0.5rem' }}>
+                                <div style={{ marginTop: '0.75rem', padding: '1rem', background: '#FAF6F0', borderRadius: 'var(--radius-md)', border: '1px solid #E2D3C2' }}>
+                                    <p style={{ fontSize: '0.875rem', color: '#9C8F84', marginBottom: '0.5rem' }}>
                                         Enter the 6-digit code sent to +65 {formData.phoneNumber}
                                     </p>
                                     <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -288,7 +288,7 @@ function RegisterForm() {
                                         </button>
                                     </div>
                                     {otpError && <p style={{ color: '#ef4444', fontSize: '0.875rem', marginTop: '0.5rem' }}>{otpError}</p>}
-                                    <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.5rem' }}>
+                                    <p style={{ fontSize: '0.75rem', color: '#9C8F84', marginTop: '0.5rem' }}>
                                         <Phone size={12} style={{ display: 'inline', marginRight: '0.25rem' }} />
                                         For testing, use code: <strong>123456</strong>
                                     </p>

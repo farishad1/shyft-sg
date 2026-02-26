@@ -86,7 +86,7 @@ export default async function SchedulePage() {
     return (
         <div>
             <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem' }}>My Schedule</h1>
-            <p style={{ color: '#888', marginBottom: '2rem' }}>Track your shifts and applications</p>
+            <p style={{ color: '#9C8F84', marginBottom: '2rem' }}>Track your shifts and applications</p>
 
             {/* Tabs Container */}
             <div style={{ display: 'grid', gap: '2rem' }}>
@@ -100,7 +100,7 @@ export default async function SchedulePage() {
                     </div>
 
                     {upcomingShifts.length === 0 ? (
-                        <div className="card" style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>
+                        <div className="card" style={{ padding: '2rem', textAlign: 'center', color: '#9C8F84' }}>
                             <Calendar size={40} style={{ opacity: 0.3, marginBottom: '0.5rem' }} />
                             <p>No upcoming shifts scheduled</p>
                             <Link href="/dashboard/shifts" className="btn btn-primary" style={{ marginTop: '1rem' }}>
@@ -137,7 +137,7 @@ export default async function SchedulePage() {
                     </div>
 
                     {pendingApplications.length === 0 ? (
-                        <div className="card" style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>
+                        <div className="card" style={{ padding: '2rem', textAlign: 'center', color: '#9C8F84' }}>
                             <p>No pending applications</p>
                         </div>
                     ) : (
@@ -168,7 +168,7 @@ export default async function SchedulePage() {
                     </div>
 
                     {pastShifts.length === 0 && declinedApplications.length === 0 ? (
-                        <div className="card" style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>
+                        <div className="card" style={{ padding: '2rem', textAlign: 'center', color: '#9C8F84' }}>
                             <p>No past shifts yet</p>
                         </div>
                     ) : (
@@ -195,8 +195,8 @@ export default async function SchedulePage() {
                                 >
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <div>
-                                            <div style={{ fontWeight: 500, color: '#888' }}>{app.jobPosting.title}</div>
-                                            <div style={{ fontSize: '0.875rem', color: '#666' }}>{app.jobPosting.hotel.hotelName}</div>
+                                            <div style={{ fontWeight: 500, color: '#5C524A' }}>{app.jobPosting.title}</div>
+                                            <div style={{ fontSize: '0.875rem', color: '#9C8F84' }}>{app.jobPosting.hotel.hotelName}</div>
                                         </div>
                                         <span className="badge badge-declined">Declined</span>
                                     </div>
@@ -226,7 +226,7 @@ interface ShiftCardProps {
 }
 
 function ShiftCard({ type, shiftId, title, hotelName, date, startTime, endTime, location, earnings, note, linkTo, isPaid }: ShiftCardProps) {
-    const borderColor = type === 'upcoming' ? '#22c55e' : type === 'pending' ? '#eab308' : '#333';
+    const borderColor = type === 'upcoming' ? '#22c55e' : type === 'pending' ? '#D97706' : '#E2D3C2';
 
     const content = (
         <div
@@ -240,9 +240,9 @@ function ShiftCard({ type, shiftId, title, hotelName, date, startTime, endTime, 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ flex: 1 }}>
                     <h3 style={{ fontWeight: 600, marginBottom: '0.25rem' }}>{title}</h3>
-                    <div style={{ fontSize: '0.875rem', color: '#888', marginBottom: '0.75rem' }}>{hotelName}</div>
+                    <div style={{ fontSize: '0.875rem', color: '#9C8F84', marginBottom: '0.75rem' }}>{hotelName}</div>
 
-                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.875rem', color: '#aaa' }}>
+                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.875rem', color: '#9C8F84' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <Calendar size={14} />
                             {date.toLocaleDateString('en-SG', { weekday: 'short', month: 'short', day: 'numeric' })}
@@ -258,7 +258,7 @@ function ShiftCard({ type, shiftId, title, hotelName, date, startTime, endTime, 
                     </div>
 
                     {note && type === 'upcoming' && (
-                        <div style={{ marginTop: '0.75rem', padding: '0.5rem', background: '#111', borderRadius: 'var(--radius-sm)', fontSize: '0.875rem', color: '#888' }}>
+                        <div style={{ marginTop: '0.75rem', padding: '0.5rem', background: '#FAF6F0', borderRadius: 'var(--radius-sm)', fontSize: '0.875rem', color: '#9C8F84', border: '1px solid #E2D3C2' }}>
                             📋 {note}
                         </div>
                     )}

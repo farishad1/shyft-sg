@@ -47,7 +47,7 @@ export default async function HotelRosterPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <div>
                     <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.25rem' }}>Roster</h1>
-                    <p style={{ color: '#888' }}>Manage your scheduled shifts</p>
+                    <p style={{ color: '#9C8F84' }}>Manage your scheduled shifts</p>
                 </div>
 
                 <Link href="/hotel/roster/history" className="btn btn-ghost" style={{ display: 'flex', gap: '0.5rem' }}>
@@ -63,7 +63,7 @@ export default async function HotelRosterPage() {
                 <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
                     <Calendar size={48} style={{ opacity: 0.3, marginBottom: '1rem' }} />
                     <h2 style={{ marginBottom: '0.5rem' }}>No Upcoming Shifts</h2>
-                    <p style={{ color: '#888', marginBottom: '1.5rem' }}>When you accept applicants, shifts will appear here.</p>
+                    <p style={{ color: '#9C8F84', marginBottom: '1.5rem' }}>When you accept applicants, shifts will appear here.</p>
                     <Link href="/hotel/jobs/new" className="btn btn-primary">
                         Post a Shift
                     </Link>
@@ -93,19 +93,19 @@ export default async function HotelRosterPage() {
                                                 justifyContent: 'center',
                                                 fontSize: '0.75rem',
                                                 fontWeight: 600,
-                                                color: '#000'
+                                                color: '#FFFFFF'
                                             }}>
                                                 {shift.worker.firstName[0]}{shift.worker.lastName[0]}
                                             </div>
                                             <div>
                                                 <div style={{ fontWeight: 500 }}>{shift.worker.firstName} {shift.worker.lastName}</div>
-                                                <div style={{ fontSize: '0.75rem', color: '#888' }}>{shift.worker.user.email}</div>
+                                                <div style={{ fontSize: '0.75rem', color: '#9C8F84' }}>{shift.worker.user.email}</div>
                                             </div>
                                             <span className={`badge badge-${shift.worker.tier.toLowerCase()}`}>{shift.worker.tier}</span>
                                         </div>
 
                                         {/* Shift Details */}
-                                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.875rem', color: '#888' }}>
+                                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.875rem', color: '#9C8F84' }}>
                                             <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                                 <Calendar size={14} />
                                                 {shiftDate.toLocaleDateString('en-SG', { weekday: 'short', month: 'short', day: 'numeric' })}
@@ -121,7 +121,7 @@ export default async function HotelRosterPage() {
                                         <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--accent)' }}>
                                             ${shift.estimatedPay.toFixed(2)}
                                         </div>
-                                        <span style={{ fontSize: '0.75rem', color: '#888' }}>estimated pay</span>
+                                        <span style={{ fontSize: '0.75rem', color: '#9C8F84' }}>estimated pay</span>
                                     </div>
                                 </div>
                             </div>

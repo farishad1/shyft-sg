@@ -62,7 +62,7 @@ export default async function HotelDashboardPage() {
                             <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '0.5rem', color: '#eab308' }}>
                                 Verification In Progress
                             </h2>
-                            <p style={{ color: '#ccc', marginBottom: '1rem' }}>
+                            <p style={{ color: '#9C8F84', marginBottom: '1rem' }}>
                                 Your hotel profile is currently under review by our team. This process usually takes 24-48 hours.
                             </p>
                             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -73,16 +73,16 @@ export default async function HotelDashboardPage() {
                     </div>
                 </div>
 
-                <div style={{ marginTop: '2rem', padding: '1.5rem', background: '#111', borderRadius: 'var(--radius-md)', border: '1px solid #333' }}>
-                    <h3 style={{ marginBottom: '1rem', color: '#888' }}>While You Wait...</h3>
-                    <ul style={{ listStyle: 'disc', paddingLeft: '1.5rem', color: '#888', lineHeight: 1.8 }}>
+                <div style={{ marginTop: '2rem', padding: '1.5rem', background: '#FFFFFF', borderRadius: 'var(--radius-md)', border: '1px solid #E2D3C2' }}>
+                    <h3 style={{ marginBottom: '1rem', color: '#9C8F84' }}>While You Wait...</h3>
+                    <ul style={{ listStyle: 'disc', paddingLeft: '1.5rem', color: '#9C8F84', lineHeight: 1.8 }}>
                         <li>Ensure your UEN ({hotelProfile.uen}) is correctly registered</li>
                         <li>Review our <Link href="/faq" style={{ color: 'var(--accent)' }}>FAQ</Link> for hotel partners</li>
                         <li>Prepare your first job posting details</li>
                     </ul>
                 </div>
 
-                <div style={{ marginTop: '2rem', padding: '1rem', background: '#111', borderRadius: 'var(--radius-md)', border: '1px solid #333', opacity: 0.5 }}>
+                <div style={{ marginTop: '2rem', padding: '1rem', background: '#FFFFFF', borderRadius: 'var(--radius-md)', border: '1px solid #E2D3C2', opacity: 0.5 }}>
                     <button className="btn btn-primary btn-lg" disabled style={{ width: '100%', cursor: 'not-allowed' }}>
                         <PlusCircle size={18} style={{ marginRight: '0.5rem' }} />
                         Post New Shift (Verification Required)
@@ -175,8 +175,8 @@ export default async function HotelDashboardPage() {
                 }}>
                     <PlusCircle size={24} color="var(--accent)" />
                     <div>
-                        <div style={{ fontWeight: 600, color: '#fff' }}>Post New Shift</div>
-                        <div style={{ fontSize: '0.875rem', color: '#888' }}>Create a job listing</div>
+                        <div style={{ fontWeight: 600, color: '#2F2A26' }}>Post New Shift</div>
+                        <div style={{ fontSize: '0.875rem', color: '#9C8F84' }}>Create a job listing</div>
                     </div>
                 </Link>
 
@@ -190,15 +190,15 @@ export default async function HotelDashboardPage() {
                 }}>
                     <Calendar size={24} color="var(--accent)" />
                     <div>
-                        <div style={{ fontWeight: 600, color: '#fff' }}>Manage Postings</div>
-                        <div style={{ fontSize: '0.875rem', color: '#888' }}>View applicants and status</div>
+                        <div style={{ fontWeight: 600, color: '#2F2A26' }}>Manage Postings</div>
+                        <div style={{ fontSize: '0.875rem', color: '#9C8F84' }}>View applicants and status</div>
                     </div>
                 </Link>
             </div>
 
             {/* Upcoming Roster */}
             <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid #333', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid #E2D3C2', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Upcoming Roster</h2>
                     <Link href="/hotel/roster" style={{ color: 'var(--accent)', fontSize: '0.875rem', textDecoration: 'none' }}>
                         View All →
@@ -206,7 +206,7 @@ export default async function HotelDashboardPage() {
                 </div>
 
                 {upcomingShifts.length === 0 ? (
-                    <div style={{ padding: '3rem', textAlign: 'center', color: '#888' }}>
+                    <div style={{ padding: '3rem', textAlign: 'center', color: '#9C8F84' }}>
                         <Calendar size={48} style={{ opacity: 0.3, marginBottom: '1rem' }} />
                         <p>No upcoming shifts scheduled</p>
                         <Link href="/hotel/jobs/new" className="btn btn-primary" style={{ marginTop: '1rem' }}>
@@ -215,7 +215,7 @@ export default async function HotelDashboardPage() {
                     </div>
                 ) : (
                     <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                        <thead style={{ background: '#111', color: '#888', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                        <thead style={{ background: '#5A3E2B', color: '#E6C7A1', fontSize: '0.75rem', textTransform: 'uppercase' }}>
                             <tr>
                                 <th style={{ padding: '1rem' }}>Date</th>
                                 <th style={{ padding: '1rem' }}>Role</th>
@@ -225,7 +225,7 @@ export default async function HotelDashboardPage() {
                         </thead>
                         <tbody>
                             {upcomingShifts.map((shift) => (
-                                <tr key={shift.id} style={{ borderBottom: '1px solid #222' }}>
+                                <tr key={shift.id} style={{ borderBottom: '1px solid #E2D3C2' }}>
                                     <td style={{ padding: '1rem' }}>
                                         {new Date(shift.shiftDate).toLocaleDateString('en-SG', { weekday: 'short', month: 'short', day: 'numeric' })}
                                     </td>
@@ -270,7 +270,7 @@ function StatCard({ label, value, icon }: { label: string; value: string; icon: 
                 width: '2.5rem',
                 height: '2.5rem',
                 borderRadius: '50%',
-                background: '#222',
+                background: 'rgba(212, 163, 115, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
@@ -278,8 +278,8 @@ function StatCard({ label, value, icon }: { label: string; value: string; icon: 
                 {icon}
             </div>
             <div>
-                <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>{label}</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 700 }}>{value}</div>
+                <div style={{ fontSize: '0.75rem', color: '#9C8F84', textTransform: 'uppercase' }}>{label}</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#5A3E2B' }}>{value}</div>
             </div>
         </div>
     );

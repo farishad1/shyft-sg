@@ -32,8 +32,7 @@ export default async function HomePage() {
           Unlock shifts at unique stays
         </h1>
         <p className="hero-subtitle">
-          Connect with Singapore&apos;s most exciting boutique hotels, capsule hotels, and serviced apartments.
-          Find flexible work that fits your schedule.
+          Flexible hospitality jobs at top-rated stays in Singapore.
         </p>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
           <Link href="/auth/register?type=worker" className="btn btn-primary btn-lg">
@@ -87,24 +86,24 @@ export default async function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="section" style={{ background: 'var(--card)' }}>
+      <section className="section" style={{ background: '#E6C7A1' }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem', textAlign: 'center' }}>
             <div>
-              <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--accent)' }}>500+</div>
-              <div className="text-muted">Active Workers</div>
+              <div style={{ fontSize: '3rem', fontWeight: 800, color: '#5A3E2B' }}>500+</div>
+              <div style={{ color: '#6B4F36' }}>Active Workers</div>
             </div>
             <div>
-              <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--accent)' }}>50+</div>
-              <div className="text-muted">Partner Hotels</div>
+              <div style={{ fontSize: '3rem', fontWeight: 800, color: '#5A3E2B' }}>50+</div>
+              <div style={{ color: '#6B4F36' }}>Partner Hotels</div>
             </div>
             <div>
-              <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--accent)' }}>10k+</div>
-              <div className="text-muted">Shifts Completed</div>
+              <div style={{ fontSize: '3rem', fontWeight: 800, color: '#5A3E2B' }}>10k+</div>
+              <div style={{ color: '#6B4F36' }}>Shifts Completed</div>
             </div>
             <div>
-              <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--accent)' }}>4.8</div>
-              <div className="text-muted">Average Rating</div>
+              <div style={{ fontSize: '3rem', fontWeight: 800, color: '#5A3E2B' }}>4.8</div>
+              <div style={{ color: '#6B4F36' }}>Average Rating</div>
             </div>
           </div>
         </div>
@@ -118,8 +117,8 @@ export default async function HomePage() {
 
       {/* Footer */}
       <footer style={{
-        background: 'var(--card)',
-        borderTop: '1px solid var(--border)',
+        background: '#5A3E2B',
+        borderTop: '1px solid #4A3020',
         padding: '3rem 0',
       }}>
         <div className="container">
@@ -135,29 +134,29 @@ export default async function HomePage() {
                 <div style={{
                   width: '2rem',
                   height: '2rem',
-                  background: '#000',
-                  border: '2px solid var(--accent)',
+                  background: '#4A3020',
+                  border: '2px solid #D4A373',
                   borderRadius: 'var(--radius-sm)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 800,
-                  color: 'var(--accent)',
+                  color: '#D4A373',
                 }}>
                   S
                 </div>
-                <span style={{ fontWeight: 700, color: 'var(--foreground)' }}>
-                  Shyft<span style={{ color: 'var(--accent)' }}>Sg</span>
+                <span style={{ fontWeight: 700, color: '#FAF6F0' }}>
+                  Shyft<span style={{ color: '#D4A373' }}>Sg</span>
                 </span>
               </div>
-              <p className="text-muted" style={{ fontSize: '0.875rem' }}>
+              <p style={{ fontSize: '0.875rem', color: '#E6C7A1' }}>
                 Connecting hospitality talent with unique stays across Singapore.
               </p>
             </div>
 
             {/* Quick Links */}
             <div>
-              <h4 style={{ marginBottom: '1rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Quick Links</h4>
+              <h4 style={{ marginBottom: '1rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#FAF6F0' }}>Quick Links</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <Link href="#how-it-works" className="nav-link">How It Works</Link>
                 <Link href="#faq" className="nav-link">FAQ</Link>
@@ -167,7 +166,7 @@ export default async function HomePage() {
 
             {/* For Workers */}
             <div>
-              <h4 style={{ marginBottom: '1rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>For Workers</h4>
+              <h4 style={{ marginBottom: '1rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#FAF6F0' }}>For Workers</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <Link href="/auth/register?type=worker" className="nav-link">Sign Up</Link>
                 <Link href="/auth/login" className="nav-link">Login</Link>
@@ -177,7 +176,7 @@ export default async function HomePage() {
 
             {/* For Hotels */}
             <div>
-              <h4 style={{ marginBottom: '1rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>For Hotels</h4>
+              <h4 style={{ marginBottom: '1rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#FAF6F0' }}>For Hotels</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <Link href="/auth/register?type=hotel" className="nav-link">Partner With Us</Link>
                 <Link href="/auth/login" className="nav-link">Hotel Login</Link>
@@ -188,7 +187,7 @@ export default async function HomePage() {
 
           {/* Bottom bar */}
           <div style={{
-            borderTop: '1px solid var(--border)',
+            borderTop: '1px solid #4A3020',
             paddingTop: '1.5rem',
             display: 'flex',
             justifyContent: 'space-between',
@@ -196,7 +195,7 @@ export default async function HomePage() {
             flexWrap: 'wrap',
             gap: '1rem',
           }}>
-            <p className="text-muted" style={{ fontSize: '0.75rem' }}>
+            <p style={{ fontSize: '0.75rem', color: '#E6C7A1' }}>
               © 2026 Shyft Sg. All rights reserved.
             </p>
             <div style={{ display: 'flex', gap: '1.5rem' }}>

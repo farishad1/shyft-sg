@@ -25,7 +25,7 @@ export default async function MessagesPage() {
             <div style={{
                 borderRight: '1px solid var(--border)',
                 overflow: 'auto',
-                background: '#0a0a0a'
+                background: '#FFFFFF'
             }}>
                 <div style={{
                     padding: '1.5rem',
@@ -43,7 +43,7 @@ export default async function MessagesPage() {
                 </div>
 
                 {conversations.length === 0 ? (
-                    <div style={{ padding: '3rem 1.5rem', textAlign: 'center', color: '#888' }}>
+                    <div style={{ padding: '3rem 1.5rem', textAlign: 'center', color: '#9C8F84' }}>
                         <MessageCircle size={40} style={{ opacity: 0.3, marginBottom: '1rem' }} />
                         <p>No conversations yet</p>
                         {!isAdmin && (
@@ -61,7 +61,7 @@ export default async function MessagesPage() {
                                 style={{
                                     display: 'block',
                                     padding: '1rem 1.5rem',
-                                    borderBottom: '1px solid #222',
+                                    borderBottom: '1px solid #E2D3C2',
                                     textDecoration: 'none',
                                     position: 'relative',
                                     background: conv.hasUnread ? 'rgba(239,191,4,0.05)' : 'transparent',
@@ -88,13 +88,13 @@ export default async function MessagesPage() {
                                         width: '2.5rem',
                                         height: '2.5rem',
                                         borderRadius: '50%',
-                                        background: conv.tier === 'PLATINUM' ? '#333' : conv.tier === 'GOLD' ? 'var(--accent)' : '#222',
+                                        background: conv.tier === 'PLATINUM' ? 'rgba(229,228,226,0.2)' : conv.tier === 'GOLD' ? 'var(--accent)' : 'rgba(212,163,115,0.15)',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         fontSize: '0.875rem',
                                         fontWeight: 600,
-                                        color: conv.tier === 'GOLD' ? '#000' : '#fff',
+                                        color: '#5A3E2B',
                                         border: conv.tier === 'PLATINUM' ? '2px solid #E5E4E2' : 'none'
                                     }}>
                                         {conv.role === 'HOTEL' ? '🏨' : conv.role === 'ADMIN' ? '👤' : conv.name[0]}
@@ -103,7 +103,7 @@ export default async function MessagesPage() {
                                     {/* Content */}
                                     <div style={{ flex: 1, minWidth: 0 }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                                            <span style={{ fontWeight: 600, color: '#fff' }}>{conv.name}</span>
+                                            <span style={{ fontWeight: 600, color: '#2F2A26' }}>{conv.name}</span>
                                             {conv.tier === 'PLATINUM' && (
                                                 <Crown size={14} color="#E5E4E2" />
                                             )}
@@ -111,7 +111,7 @@ export default async function MessagesPage() {
                                                 <Crown size={14} color="var(--accent)" />
                                             )}
                                             {conv.isSupport && (
-                                                <span className="badge" style={{ fontSize: '0.625rem', padding: '0.125rem 0.375rem', background: '#333', color: '#888' }}>
+                                                <span className="badge" style={{ fontSize: '0.625rem', padding: '0.125rem 0.375rem', background: '#FAF6F0', color: '#9C8F84' }}>
                                                     Support
                                                 </span>
                                             )}
@@ -119,7 +119,7 @@ export default async function MessagesPage() {
                                         {conv.lastMessage && (
                                             <p style={{
                                                 fontSize: '0.875rem',
-                                                color: '#888',
+                                                color: '#9C8F84',
                                                 overflow: 'hidden',
                                                 textOverflow: 'ellipsis',
                                                 whiteSpace: 'nowrap',
@@ -133,7 +133,7 @@ export default async function MessagesPage() {
                                     {/* Right: Time + Unread */}
                                     <div style={{ textAlign: 'right' }}>
                                         {conv.lastMessageAt && (
-                                            <span style={{ fontSize: '0.75rem', color: '#666' }}>
+                                            <span style={{ fontSize: '0.75rem', color: '#9C8F84' }}>
                                                 {formatTime(new Date(conv.lastMessageAt))}
                                             </span>
                                         )}
@@ -161,7 +161,7 @@ export default async function MessagesPage() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 background: 'var(--background)',
-                color: '#888'
+                color: '#9C8F84'
             }}>
                 <div style={{ textAlign: 'center' }}>
                     <MessageCircle size={64} style={{ opacity: 0.2, marginBottom: '1rem' }} />

@@ -63,19 +63,19 @@ export default async function AdminOverviewPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
                 <Link href="/admin/users" className="card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none', transition: 'border-color 0.2s' }}>
                     <Users size={20} color="var(--accent)" />
-                    <span style={{ color: '#fff' }}>Manage Workers</span>
+                    <span style={{ color: '#2F2A26' }}>Manage Workers</span>
                 </Link>
                 <Link href="/admin/hotels" className="card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
                     <Building2 size={20} color="var(--accent)" />
-                    <span style={{ color: '#fff' }}>Manage Hotels</span>
+                    <span style={{ color: '#2F2A26' }}>Manage Hotels</span>
                 </Link>
                 <Link href="/admin/verifications" className="card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none', border: totalPending > 0 ? '1px solid #ef4444' : undefined }}>
                     <CheckSquare size={20} color={totalPending > 0 ? '#ef4444' : 'var(--accent)'} />
-                    <span style={{ color: '#fff' }}>Verification Queue {totalPending > 0 && `(${totalPending})`}</span>
+                    <span style={{ color: '#2F2A26' }}>Verification Queue {totalPending > 0 && `(${totalPending})`}</span>
                 </Link>
                 <Link href="/admin/financials" className="card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
                     <BarChart3 size={20} color="#22c55e" />
-                    <span style={{ color: '#fff' }}>Financials</span>
+                    <span style={{ color: '#2F2A26' }}>Financials</span>
                 </Link>
             </div>
 
@@ -83,7 +83,7 @@ export default async function AdminOverviewPage() {
             <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem' }}>Recent Sign Ups</h2>
             <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                    <thead style={{ background: '#111', color: '#888', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                    <thead style={{ background: '#5A3E2B', color: '#E6C7A1', fontSize: '0.75rem', textTransform: 'uppercase' }}>
                         <tr>
                             <th style={{ padding: '1rem' }}>User</th>
                             <th style={{ padding: '1rem' }}>Role</th>
@@ -102,17 +102,17 @@ export default async function AdminOverviewPage() {
                                 : user.hotelProfile?.verificationStatus;
 
                             return (
-                                <tr key={user.id} style={{ borderBottom: '1px solid #222' }}>
+                                <tr key={user.id} style={{ borderBottom: '1px solid #E2D3C2' }}>
                                     <td style={{ padding: '1rem' }}>
                                         <div style={{ fontWeight: 500 }}>{name}</div>
-                                        <div style={{ fontSize: '0.875rem', color: '#888' }}>{user.email}</div>
+                                        <div style={{ fontSize: '0.875rem', color: '#9C8F84' }}>{user.email}</div>
                                     </td>
                                     <td style={{ padding: '1rem' }}>
                                         <span className={`badge ${user.role === 'WORKER' ? 'badge-blue' : 'badge-gold'}`} style={{ fontSize: '0.75rem' }}>
                                             {user.role}
                                         </span>
                                     </td>
-                                    <td style={{ padding: '1rem', color: '#ccc' }}>
+                                    <td style={{ padding: '1rem', color: '#9C8F84' }}>
                                         {new Date(user.createdAt).toLocaleDateString()}
                                     </td>
                                     <td style={{ padding: '1rem' }}>
@@ -125,7 +125,7 @@ export default async function AdminOverviewPage() {
                         })}
                         {recentUsers.length === 0 && (
                             <tr>
-                                <td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>No users yet</td>
+                                <td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: '#9C8F84' }}>No users yet</td>
                             </tr>
                         )}
                     </tbody>
@@ -141,15 +141,15 @@ function StatCard({ label, value, icon, highlight = false }: { label: string; va
             display: 'flex',
             alignItems: 'center',
             gap: '1.5rem',
-            border: highlight ? '1px solid #ef4444' : '1px solid #333',
+            border: highlight ? '1px solid #ef4444' : '1px solid #E2D3C2',
             padding: '1.5rem',
-            backgroundColor: '#111'
+            backgroundColor: '#FFFFFF'
         }}>
             <div style={{
                 width: '3rem',
                 height: '3rem',
                 borderRadius: '50%',
-                background: '#222',
+                background: 'rgba(212, 163, 115, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -158,8 +158,8 @@ function StatCard({ label, value, icon, highlight = false }: { label: string; va
                 {icon}
             </div>
             <div>
-                <div style={{ fontSize: '0.875rem', color: '#888' }}>{label}</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 700, color: highlight ? '#ef4444' : '#fff' }}>{value}</div>
+                <div style={{ fontSize: '0.875rem', color: '#9C8F84' }}>{label}</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 700, color: highlight ? '#ef4444' : '#5A3E2B' }}>{value}</div>
             </div>
         </div>
     );

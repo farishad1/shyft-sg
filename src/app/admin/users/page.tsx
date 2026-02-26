@@ -58,7 +58,7 @@ export default async function AdminUsersPage({
                 </Link>
                 <div>
                     <h1 style={{ fontSize: '2rem', fontWeight: 700 }}>User Management</h1>
-                    <p style={{ color: '#888' }}>{workers.length} workers registered</p>
+                    <p style={{ color: '#9C8F84' }}>{workers.length} workers registered</p>
                 </div>
             </div>
 
@@ -66,7 +66,7 @@ export default async function AdminUsersPage({
             <form action="/admin/users" method="GET" style={{ marginBottom: '1.5rem' }}>
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
                     <div style={{ flex: 1, position: 'relative' }}>
-                        <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#888' }} />
+                        <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#9C8F84' }} />
                         <input
                             type="text"
                             name="q"
@@ -85,7 +85,7 @@ export default async function AdminUsersPage({
                 <div style={{ overflowX: 'auto' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
-                            <tr style={{ borderBottom: '1px solid var(--border)', background: '#111' }}>
+                            <tr style={{ borderBottom: '1px solid var(--border)', background: '#5A3E2B', color: '#E6C7A1' }}>
                                 <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600 }}>Name</th>
                                 <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600 }}>Email</th>
                                 <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 600 }}>Tier</th>
@@ -99,20 +99,20 @@ export default async function AdminUsersPage({
                             {workers.map((worker) => {
                                 const totalEarnings = worker.shifts.reduce((sum, s) => sum + s.estimatedPay, 0);
                                 return (
-                                    <tr key={worker.id} style={{ borderBottom: '1px solid #222' }}>
+                                    <tr key={worker.id} style={{ borderBottom: '1px solid #E2D3C2' }}>
                                         <td style={{ padding: '1rem' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                                 <div style={{
                                                     width: '2rem',
                                                     height: '2rem',
                                                     borderRadius: '50%',
-                                                    background: worker.tier === 'PLATINUM' ? '#333' : worker.tier === 'GOLD' ? 'var(--accent)' : '#222',
+                                                    background: worker.tier === 'PLATINUM' ? 'rgba(229,228,226,0.2)' : worker.tier === 'GOLD' ? 'var(--accent)' : 'rgba(212,163,115,0.15)',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
                                                     fontWeight: 600,
                                                     fontSize: '0.75rem',
-                                                    color: worker.tier === 'GOLD' ? '#000' : '#fff',
+                                                    color: '#5A3E2B',
                                                     border: worker.tier === 'PLATINUM' ? '2px solid #E5E4E2' : 'none'
                                                 }}>
                                                     {worker.firstName[0]}{worker.lastName[0]}
@@ -124,7 +124,7 @@ export default async function AdminUsersPage({
                                                 </div>
                                             </div>
                                         </td>
-                                        <td style={{ padding: '1rem', color: '#888' }}>{worker.user.email}</td>
+                                        <td style={{ padding: '1rem', color: '#9C8F84' }}>{worker.user.email}</td>
                                         <td style={{ padding: '1rem', textAlign: 'center' }}>
                                             <span className={`badge badge-${worker.tier.toLowerCase()}`}>{worker.tier}</span>
                                         </td>
@@ -171,7 +171,7 @@ export default async function AdminUsersPage({
                 </div>
 
                 {workers.length === 0 && (
-                    <div style={{ padding: '3rem', textAlign: 'center', color: '#888' }}>
+                    <div style={{ padding: '3rem', textAlign: 'center', color: '#9C8F84' }}>
                         <Users size={40} style={{ opacity: 0.3, marginBottom: '1rem' }} />
                         <p>No workers found{searchQuery && ` matching "${searchQuery}"`}</p>
                     </div>
