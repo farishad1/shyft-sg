@@ -29,7 +29,8 @@ export default async function HomePage() {
       {/* Hero Section */}
       <section className="hero">
         <h1 className="hero-title">
-          Unlock shifts at unique stays
+          Unlock Shifts at{' '}
+          <span style={{ color: '#D4A373' }}>Unique Stays</span>
         </h1>
         <p className="hero-subtitle">
           Flexible hospitality jobs at top-rated stays in Singapore.
@@ -86,24 +87,24 @@ export default async function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="section" style={{ background: '#E6C7A1' }}>
+      <section className="section" style={{ background: '#F5F5F5' }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem', textAlign: 'center' }}>
             <div>
-              <div style={{ fontSize: '3rem', fontWeight: 800, color: '#5A3E2B' }}>500+</div>
-              <div style={{ color: '#6B4F36' }}>Active Workers</div>
+              <div style={{ fontSize: '3rem', fontWeight: 800, color: '#000000' }}>500+</div>
+              <div style={{ color: '#5C524A' }}>Active Workers</div>
             </div>
             <div>
-              <div style={{ fontSize: '3rem', fontWeight: 800, color: '#5A3E2B' }}>50+</div>
-              <div style={{ color: '#6B4F36' }}>Partner Hotels</div>
+              <div style={{ fontSize: '3rem', fontWeight: 800, color: '#000000' }}>50+</div>
+              <div style={{ color: '#5C524A' }}>Partner Hotels</div>
             </div>
             <div>
-              <div style={{ fontSize: '3rem', fontWeight: 800, color: '#5A3E2B' }}>10k+</div>
-              <div style={{ color: '#6B4F36' }}>Shifts Completed</div>
+              <div style={{ fontSize: '3rem', fontWeight: 800, color: '#000000' }}>10k+</div>
+              <div style={{ color: '#5C524A' }}>Shifts Completed</div>
             </div>
             <div>
-              <div style={{ fontSize: '3rem', fontWeight: 800, color: '#5A3E2B' }}>4.8</div>
-              <div style={{ color: '#6B4F36' }}>Average Rating</div>
+              <div style={{ fontSize: '3rem', fontWeight: 800, color: '#000000' }}>4.8</div>
+              <div style={{ color: '#5C524A' }}>Average Rating</div>
             </div>
           </div>
         </div>
